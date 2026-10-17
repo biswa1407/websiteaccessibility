@@ -1,353 +1,338 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BiswajitWeb — Pro Network & Portfolio</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..900;1,9..40,400..900&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'DM Sans', sans-serif; overflow-x: hidden; background: #020617; color: #f8fafc; }
-    .word, .letter { display: inline-block; }
-    .glass { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); }
-    .profile-pill { transition: all 0.3s ease; }
-    .profile-pill:hover { transform: translateY(-2px); border-color: rgba(99, 102, 241, 0.6); box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.3); }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>A11yPulse — Web Accessibility Auditor & Checklist</title>
+<meta name="description" content="Audit your site against WCAG 2.2 with a weighted checklist, code fixes, an HTML scanner and a contrast checker.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%92%A0%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@400;500&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+<style>
+:root{--bg:#020617;--sf:rgba(255,255,255,.05);--bd:rgba(255,255,255,.11);--tx:#e8eef6;--mu:#98a6b8;--ac:#34d399;--acd:#052e22;--in:#818cf8;--rd:#f87171;--am:#fbbf24;color-scheme:dark}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{margin:0;min-height:100vh;color:var(--tx);font:16px/1.6 Figtree,system-ui,sans-serif;background:radial-gradient(40rem 28rem at 6% -5%,rgba(99,102,241,.22),transparent 60%),radial-gradient(34rem 26rem at 100% 8%,rgba(52,211,153,.11),transparent 60%),radial-gradient(30rem 24rem at 55% 110%,rgba(251,191,36,.08),transparent 60%),var(--bg);background-attachment:fixed}
+h1,h2,h3,.fd{font-family:'Bricolage Grotesque',system-ui,sans-serif;letter-spacing:-.02em;margin:0}
+h1{font-size:clamp(2rem,6vw,3.6rem);font-weight:800;line-height:1.1}h2{font-size:1.3rem;font-weight:700}
+p{margin:0}a{color:inherit;text-decoration:none}
+.mu{color:var(--mu)}.sm{font-size:.85rem}.xs{font-size:.75rem}.mt1{margin-top:.5rem}.mt2{margin-top:1rem}.mt3{margin-top:1.5rem}.mt4{margin-top:2.5rem}
+.wrap{max-width:72rem;margin:0 auto;padding:0 1rem}
+.row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}.bt{justify-content:space-between}
+.g{display:grid;gap:1rem}.g2{grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
+.hdr{position:sticky;top:0;z-index:40;background:rgba(2,6,23,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd);padding-top:env(safe-area-inset-top,0)}
+.hdr .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.6rem;padding-top:.7rem;padding-bottom:.7rem}
+.logo{display:grid;place-items:center;width:2.2rem;height:2.2rem;border-radius:.6rem;background:linear-gradient(135deg,var(--in),var(--ac));color:#022c22}
+nav{display:flex;gap:.25rem;overflow-x:auto;max-width:100%}
+.nl{padding:.4rem .8rem;border-radius:.6rem;color:var(--mu);font-weight:500;font-size:.9rem;white-space:nowrap;transition:.2s}
+.nl:hover{color:var(--tx)}.nl[aria-current=page]{color:var(--tx);background:rgba(255,255,255,.09)}
+.card{background:var(--sf);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--bd);border-radius:1rem;padding:1.2rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.55rem 1rem;border-radius:.7rem;font:600 .88rem Figtree,sans-serif;border:1px solid var(--bd);background:transparent;color:var(--tx);cursor:pointer;transition:.2s}
+.btn:hover{background:rgba(255,255,255,.09)}.btn-p{background:var(--ac);border-color:var(--ac);color:var(--acd)}.btn-p:hover{background:#6ee7b7}.btn-i{background:var(--in);border-color:var(--in);color:#fff}.btn-i:hover{background:#a5b4fc;color:#1e1b4b}
+.in{width:100%;background:rgba(2,6,23,.7);border:1px solid var(--bd);border-radius:.7rem;padding:.6rem .8rem;color:var(--tx);font:inherit}
+:focus-visible{outline:2px solid var(--in);outline-offset:2px}.in:focus{outline:2px solid var(--in);outline-offset:1px}
+.chip{padding:.3rem .8rem;border-radius:99px;border:1px solid var(--bd);font:.85rem Figtree,sans-serif;color:var(--mu);cursor:pointer;background:transparent;transition:.2s}
+.chip[aria-pressed=true]{background:var(--in);border-color:var(--in);color:#fff;font-weight:600}
+.lv{font-size:.72rem;font-weight:600;padding:.08rem .55rem;border-radius:99px;border:1px solid;white-space:nowrap}
+.lvA{color:var(--rd);border-color:#7f3a3a}.lvAA{color:var(--am);border-color:#7a6320}.lvAAA{color:var(--in);border-color:#4a4f9a}
+.pill{padding:.1rem .7rem;border:1px solid var(--bd);border-radius:99px;font-size:.78rem;transition:.2s}.pill:hover{border-color:var(--in)}
+.item{display:flex;gap:1rem;cursor:pointer;transition:border-color .2s}.item:hover{border-color:rgba(129,140,248,.6)}
+.item:has(input:checked){border-color:rgba(52,211,153,.5);background:rgba(52,211,153,.07)}
+.item:has(input:focus-visible){outline:2px solid var(--in);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.box{display:grid;place-items:center;width:1.5rem;height:1.5rem;flex:none;border-radius:.45rem;border:2px solid #5b6b80;transition:.2s}
+.box svg{width:.95rem;height:.95rem;opacity:0;stroke:var(--acd);stroke-width:3.2;fill:none}
+input:checked+.box{background:var(--ac);border-color:var(--ac)}input:checked+.box svg{opacity:1}
+.item:has(input:checked) .ttl{color:var(--mu);text-decoration:line-through}
+pre{font:.78rem/1.55 'JetBrains Mono',monospace;white-space:pre-wrap;word-break:break-word;margin:0}
+details>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:.7rem;padding:1rem}summary::-webkit-details-marker{display:none}
+details[open] .chev{transform:rotate(90deg)}.chev{transition:.2s;width:1rem;height:1rem;stroke:currentColor;fill:none;stroke-width:2}
+.bad{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.3);border-radius:.7rem;padding:.7rem}.ok{background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.3);border-radius:.7rem;padding:.7rem}
+.bar{height:.5rem;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}.bar>div{height:100%;width:0;border-radius:99px}
+.audit-top{display:grid;gap:1rem;grid-template-columns:1fr}
+@media(min-width:768px){.audit-top{grid-template-columns:260px 1fr;position:sticky;top:4.2rem;z-index:30;background:rgba(2,6,23,.82);backdrop-filter:blur(10px);padding:.5rem 0;border-radius:1rem}.login-art{display:grid!important}}
+.gauge{position:relative;width:7rem;height:7rem;margin:0 auto}.gauge>div{position:absolute;inset:0;display:grid;place-items:center}
+.av{width:3rem;height:3rem;border-radius:50%;display:grid;place-items:center;font:800 1rem 'Bricolage Grotesque';color:#052e22;flex:none}
+.crew{display:flex;align-items:center;gap:1rem;width:100%;text-align:left;color:inherit;cursor:pointer;font:inherit;transition:border-color .3s,background .3s}.crew.on{border-color:var(--ac);background:rgba(52,211,153,.12)}
+.grid4{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr))}
+.hero{display:grid;gap:2.5rem;align-items:center}@media(min-width:900px){.hero{grid-template-columns:1.1fr .9fr}}
+.login-art{display:none;place-items:center;background:rgba(52,211,153,.08)}.login-box{display:grid;max-width:46rem;margin:0 auto;padding:0;overflow:hidden}@media(min-width:768px){.login-box{grid-template-columns:1fr 1fr}}
+.toast{position:fixed;left:50%;bottom:1.5rem;transform:translateX(-50%);z-index:60;background:#1b2433;border:1px solid var(--bd);border-radius:.8rem;padding:.6rem 1rem;font-size:.9rem;opacity:0;pointer-events:none}
+.skip{position:absolute;left:.7rem;top:-4rem;background:var(--in);color:#fff;padding:.5rem 1rem;border-radius:.6rem;z-index:99}.skip:focus{top:.7rem}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
 </head>
-<body class="min-h-screen">
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<header class="hdr"><div class="wrap">
+  <a href="#/home" class="row" style="gap:.6rem" aria-label="A11yPulse home"><span class="logo" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span><span class="fd" style="font-size:1.25rem;font-weight:800">A11yPulse</span></a>
+  <nav aria-label="Main"><a class="nl" href="#/home" data-p="home">Home</a><a class="nl" href="#/audit" data-p="audit">Audit <span id="fixCount" class="lv lvAA">0</span></a><a class="nl" href="#/tools" data-p="tools">Tools</a><a class="nl" href="#/crew" data-p="crew">Crew</a><a class="nl" href="#/learn" data-p="learn">Learn</a></nav>
+  <div class="row"><a id="loginLink" href="#/login" class="btn btn-p">Sign in</a><span id="authBox" class="row" hidden><span id="roleBadge" class="lv lvAAA"></span><button id="logout" class="btn xs">Sign out</button></span></div>
+</div></header>
 
-  <!-- TOP MARQUEE: ALL PROFILE NAMES VISIBLE ON TOPMOST HOME PAGE -->
-  <div class="bg-indigo-950/80 border-b border-indigo-900/50 py-2.5 px-4 sticky top-0 z-50 backdrop-blur-md">
-    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4 overflow-x-auto no-scrollbar">
-      <div class="flex items-center gap-2 flex-shrink-0">
-        <span class="relative flex h-2.5 w-2.5">
-          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-        </span>
-        <span class="text-xs font-bold tracking-wider text-indigo-300 uppercase">Active Crew Matrix:</span>
-      </div>
-      <div class="flex items-center gap-3 text-xs font-semibold text-slate-300" id="topProfileTicker">
-        <!-- Injected dynamically via JS so voice commands target them -->
+<main id="main" tabindex="-1" class="wrap" style="padding-top:2rem;padding-bottom:2rem;outline:none">
+
+<section id="p-home" class="page" aria-labelledby="h-home">
+  <div class="rv row sm" style="margin-bottom:2rem"><span class="mu">Crew online:</span><span id="strip" class="row"></span></div>
+  <div class="hero">
+    <div>
+      <h1 id="h-home" class="rv">Make every page work for <span style="color:var(--ac)">everyone</span>.</h1>
+      <p class="rv mu mt2" style="font-size:1.1rem;max-width:34rem">Audit against WCAG 2.2, get ready-to-paste fixes, scan snippets and watch your score climb as you go.</p>
+      <div class="rv row mt3"><a href="#/audit" class="btn btn-p">Start an audit</a><a href="#/tools" class="btn">Scan a snippet</a></div>
+    </div>
+    <div class="rv card">
+      <svg viewBox="0 0 400 110" style="width:100%" role="img" aria-label="Animated heartbeat line"><path id="beat" d="M0 60H110l16-40 24 80 20-60 14 20H400" fill="none" stroke="#34d399" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="g mt2" style="grid-template-columns:repeat(3,1fr);text-align:center">
+        <div><div id="sScore" class="fd" style="font-size:1.9rem;font-weight:800;color:var(--ac)">0%</div><div class="mu xs">your score</div></div>
+        <div><div id="sItems" class="fd" style="font-size:1.9rem;font-weight:800">0</div><div class="mu xs">requirements</div></div>
+        <div><div class="fd" style="font-size:1.9rem;font-weight:800;color:var(--in)">4</div><div class="mu xs">POUR areas</div></div>
       </div>
     </div>
   </div>
+  <div class="grid4 mt4">
+    <a href="#/audit" class="rv card"><h2>Weighted checklist</h2><p class="mu sm mt1">Level A, AA and AAA items scored by impact.</p></a>
+    <a href="#/audit" class="rv card"><h2>Code fixes</h2><p class="mu sm mt1">Bad versus accessible snippets for every open item.</p></a>
+    <a href="#/tools" class="rv card"><h2>Scanner and contrast</h2><p class="mu sm mt1">Paste HTML or pick colors and see results.</p></a>
+    <a href="#/crew" class="rv card"><h2>Voice crew roster</h2><p class="mu sm mt1">Say a name and the roster calls that person first.</p></a>
+  </div>
+</section>
 
-  <!-- MAIN NAVIGATION -->
-  <header class="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur sticky top-[41px] z-40">
-    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-      <div class="flex items-center space-x-2 cursor-pointer" onclick="switchView('landing')">
-        <div class="bg-gradient-to-br from-indigo-500 to-emerald-400 p-2 rounded-xl text-slate-950 font-extrabold text-sm shadow-lg shadow-indigo-500/20">BW</div>
-        <span class="font-bold text-lg tracking-tight">Biswajit <span class="text-indigo-400">Web</span></span>
-      </div>
-      
-      <!-- Nav Actions & Login State -->
-      <div class="flex items-center gap-3">
-        <div id="navActions" class="hidden items-center gap-2">
-          <span id="navRoleBadge" class="text-xs bg-indigo-950 text-indigo-400 px-3 py-1 rounded-full border border-indigo-800/60"></span>
-          <button onclick="switchView('dashboard')" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg font-semibold transition">Dashboard</button>
-          <button onclick="logout()" class="text-sm text-slate-400 hover:text-white transition ml-2">Logout</button>
-        </div>
-        <button onclick="switchView('login')" id="loginNavBtn" class="text-xs font-semibold bg-white/5 hover:bg-white/10 border border-white/10 px-4 py-2 rounded-xl transition">
-          Portal Login
-        </button>
-      </div>
+<section id="p-audit" class="page" hidden aria-labelledby="h-audit">
+  <h1 id="h-audit" class="rv" style="font-size:2rem">Accessibility audit</h1>
+  <p class="rv mu mt1">Level A counts 3 points, AA 2 and AAA 1. Progress saves in this browser.</p>
+  <div class="audit-top mt2">
+    <div class="rv card" style="text-align:center">
+      <div class="gauge"><svg viewBox="0 0 120 120" style="width:100%;height:100%" aria-hidden="true"><circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="9"/><circle id="ring" cx="60" cy="60" r="52" fill="none" stroke="#f87171" stroke-width="9" stroke-linecap="round" stroke-dasharray="326.73" stroke-dashoffset="326.73" transform="rotate(-90 60 60)"/></svg><div><span id="pct" class="fd" style="font-size:1.9rem;font-weight:800">0%</span></div></div>
+      <p id="status" class="fd mt1" style="font-weight:700"></p><p id="pts" class="mu xs"></p><p id="srScore" class="sr" role="status" aria-live="polite"></p>
     </div>
-  </header>
-
-  <main class="max-w-6xl mx-auto px-4 py-8">
-
-    <!-- ================= VIEW 1: LANDING & PORTFOLIO HOME ================= -->
-    <div id="view-landing" class="space-y-16 pb-20">
-      
-      <!-- HERO SECTION -->
-      <div class="text-center pt-8 pb-4">
-        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-950/80 border border-indigo-800/60 text-indigo-300 text-xs font-medium mb-6 hero-badge">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-indigo-400"></i> Next-Gen Web Engineering & Creative Graphics
-        </div>
-        <h1 class="text-4xl sm:text-6xl font-black tracking-tight mb-4" id="heroHeading">
-          <span class="word">Engineering</span> <span class="word text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-purple-300 to-emerald-400">Digital Mastery</span>
-        </h1>
-        <p class="text-slate-400 text-base sm:text-lg max-w-2xl mx-auto hero-sub">
-          High-performance web architecture, immersive graphics, and voice-responsive profile matrix built with Anime.js physics.
-        </p>
-
-        <!-- VOICE / HEARING COMMAND SIMULATOR BAR -->
-        <div class="mt-8 max-w-xl mx-auto glass rounded-2xl p-3 flex items-center gap-3 border border-indigo-500/30 shadow-2xl">
-          <div class="bg-indigo-600 p-2.5 rounded-xl text-white animate-pulse">
-            <i data-lucide="mic" class="w-5 h-5"></i>
-          </div>
-          <input type="text" id="voiceCommandInput" placeholder="Try typing a command like 'Call Mateus Aldana' or 'Inspect project'..." class="w-full bg-transparent text-sm text-white placeholder-slate-400 focus:outline-none" />
-          <button onclick="triggerVoiceCommand()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition flex-shrink-0">
-            Execute
-          </button>
-        </div>
-        <p id="voiceFeedback" class="mt-2 text-xs text-emerald-400 h-4 font-mono"></p>
-      </div>
-
-      <!-- REBUILT GRAPHIC CARDS ROW (FANNED 3D PORTRAITS) -->
-      <div class="space-y-4">
-        <div class="flex justify-between items-center">
-          <h2 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-            <i data-lucide="users" class="w-5 h-5 text-indigo-400"></i> Featured Leadership & Design Crew
-          </h2>
-          <span class="text-xs text-slate-400">Hover or move mouse for parallax depth</span>
-        </div>
-
-        <div class="flex justify-center items-center flex-wrap sm:flex-nowrap gap-3 sm:gap-1 py-6" id="cardsRow">
-          <!-- Cards populated dynamically with data-rot and data-depth -->
-        </div>
-      </div>
-
-      <!-- INTERACTIVE STATS COUNTER -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-4">
-        <div class="glass rounded-2xl p-6 text-center border border-slate-800">
-          <div class="text-4xl font-black text-indigo-400 mb-1"><span class="stat-num" data-count="62">0</span>+</div>
-          <div class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Production Projects</div>
-        </div>
-        <div class="glass rounded-2xl p-6 text-center border border-slate-800">
-          <div class="text-4xl font-black text-emerald-400 mb-1"><span class="stat-num" data-count="14">0</span></div>
-          <div class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Years Combined Craft</div>
-        </div>
-        <div class="glass rounded-2xl p-6 text-center border border-slate-800">
-          <div class="text-4xl font-black text-purple-400 mb-1"><span class="stat-num" data-count="9">0</span><small>.9</small></div>
-          <div class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Client Satisfaction NPS</div>
-        </div>
-      </div>
-
+    <div class="rv card">
+      <ul id="bars" class="g g2" style="list-style:none;padding:0;margin:0" aria-label="Category progress"></ul>
+      <div class="row mt2"><button id="export" class="btn btn-p">Export report</button><button id="badgeBtn" class="btn">Copy README badge</button><button id="demo" class="btn">Check all (demo)</button><button id="reset" class="btn">Reset</button></div>
     </div>
+  </div>
+  <div class="rv row bt mt3">
+    <div id="modes" role="group" aria-label="View" class="row"><button class="chip" data-m="list" aria-pressed="true">Checklist</button><button class="chip" data-m="fix" aria-pressed="false">Suggested fixes</button></div>
+    <div style="width:min(16rem,100%)"><label for="search" class="sr">Search rules</label><input id="search" type="search" placeholder="Search rules" class="in"></div>
+  </div>
+  <div id="filters" role="group" aria-label="Filter checklist" class="rv row mt1"></div>
+  <ul id="list" class="g mt2" style="list-style:none;padding:0;margin-bottom:0"></ul>
+  <div id="fixes" class="g mt2" hidden></div>
+</section>
 
-    <!-- ================= VIEW 2: LOGIN PORTAL ================= -->
-    <div id="view-login" class="hidden max-w-md mx-auto pt-12">
-      <div class="glass rounded-3xl p-8 shadow-2xl border border-slate-800">
-        <div class="text-center mb-8">
-          <div class="bg-indigo-600/20 w-14 h-14 mx-auto rounded-2xl flex items-center justify-center mb-4 border border-indigo-500/30">
-            <i data-lucide="lock" class="w-6 h-6 text-indigo-400"></i>
-          </div>
-          <h2 class="text-2xl font-bold text-white">Secure Portal Access</h2>
-          <p class="text-xs text-slate-400 mt-1">Authenticate to manage projects and member configurations.</p>
-        </div>
+<section id="p-tools" class="page" hidden aria-labelledby="h-tools">
+  <h1 id="h-tools" class="rv" style="font-size:2rem">Tools</h1>
+  <div class="rv card mt2">
+    <h2>HTML snippet scanner</h2><p class="mu sm mt1">Finds missing alt text, unlabeled fields, empty buttons and links, skipped headings and positive tabindex.</p>
+    <label for="snip" class="sm mt2" style="display:block;font-weight:500">HTML to scan</label>
+    <textarea id="snip" rows="6" spellcheck="false" class="in" style="font:.85rem 'JetBrains Mono',monospace"></textarea>
+    <div class="row mt1"><button id="scan" class="btn btn-p">Quick scan</button><button id="sample" class="btn">Load sample</button></div>
+    <div id="scanOut" class="g mt2" aria-live="polite"></div>
+  </div>
+  <div class="rv card mt2 g g2">
+    <div><h2>Contrast checker</h2>
+      <label class="row mt2 sm">Text <input id="fg" type="color" value="#8a96a3" style="width:3.4rem;height:2.2rem"></label>
+      <label class="row mt1 sm">Background <input id="bg" type="color" value="#ffffff" style="width:3.4rem;height:2.2rem"></label></div>
+    <div><div id="cPrev" style="border-radius:.8rem;padding:1rem;font-weight:600;font-size:1.1rem">The quick brown fox jumps over the lazy dog.</div>
+      <p class="sm mt1">Ratio <strong id="cRatio" style="font-family:'JetBrains Mono',monospace"></strong></p><div id="cBadges" class="row mt1"></div>
+      <button id="autoFix" class="btn mt1 xs">Auto-fix text color to 4.5:1</button></div>
+  </div>
+</section>
 
-        <form onsubmit="handlePortalLogin(event)" class="space-y-4">
-          <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1.5">Access Role</label>
-            <select id="loginRole" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:ring-2 focus:ring-indigo-500 outline-none">
-              <option value="student">Student / Contributor</option>
-              <option value="admin">System Administrator</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-xs font-medium text-slate-400 mb-1.5">Identifier / ID</label>
-            <input type="text" id="loginIdentifier" required placeholder="Enter PRN or Admin ID..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2.5 text-sm text-white focus:ring-2 focus:ring-indigo-500 outline-none" />
-          </div>
-          <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-indigo-600/30 mt-2">
-            Authenticate & Launch
-          </button>
-          <button type="button" onclick="switchView('landing')" class="w-full text-slate-400 text-xs mt-3 hover:text-white transition">
-            ← Return to Home Portfolio
-          </button>
-        </form>
-      </div>
+<section id="p-crew" class="page" hidden aria-labelledby="h-crew">
+  <h1 id="h-crew" class="rv" style="font-size:2rem">Crew roster</h1>
+  <p class="rv mu mt1">Type or speak a command such as “call Naomi Park”. The matching person is called first.</p>
+  <div class="rv card mt2">
+    <div class="row"><label for="voice" class="sr">Command</label><input id="voice" class="in" style="flex:1;min-width:10rem" placeholder="call Naomi Park"><button id="mic" class="btn">Speak</button><button id="run" class="btn btn-p">Run</button></div>
+    <p id="vfb" class="sm mt1" style="min-height:1.5rem;color:var(--ac);font-family:'JetBrains Mono',monospace" role="status" aria-live="polite"></p>
+  </div>
+  <ul id="crewGrid" class="grid4 mt2" style="list-style:none;padding:0"></ul>
+  <form id="addForm" class="card mt2 g g2" hidden aria-label="Add crew member (admin only)">
+    <div><label for="nName" class="sm">Name</label><input id="nName" class="in" required></div>
+    <div><label for="nRole" class="sm">Role</label><input id="nRole" class="in" required></div>
+    <div style="align-self:end"><button class="btn btn-p">Add member</button></div>
+  </form>
+</section>
+
+<section id="p-learn" class="page" hidden aria-labelledby="h-learn">
+  <h1 id="h-learn" class="rv" style="font-size:2rem">Learn the four principles</h1>
+  <div id="pour" class="grid4 mt2"></div>
+  <div class="rv card mt2"><h2>Keyboard testing cheat sheet</h2>
+    <p class="sm mt1"><b style="color:var(--ac)">Tab / Shift+Tab</b> <span class="mu">move focus</span> · <b style="color:var(--ac)">Enter / Space</b> <span class="mu">activate</span> · <b style="color:var(--ac)">Esc</b> <span class="mu">close dialogs</span> · <b style="color:var(--ac)">Arrows</b> <span class="mu">move in menus</span></p>
+    <p class="mu sm mt1">Full reference: <a href="https://www.w3.org/WAI/WCAG22/quickref/" target="_blank" rel="noopener" style="color:var(--in);text-decoration:underline">WCAG 2.2 Quick Reference</a>.</p></div>
+</section>
+
+<section id="p-login" class="page" hidden aria-labelledby="h-login">
+  <div class="card login-box">
+    <div class="login-art" aria-hidden="true"><svg viewBox="0 0 200 200" width="240" height="240"><g fill="none" stroke="#34d399" stroke-width="2"><circle class="pr" cx="100" cy="100" r="30"/><circle class="pr" cx="100" cy="100" r="30"/><circle class="pr" cx="100" cy="100" r="30"/></g><circle cx="100" cy="100" r="9" fill="#34d399"/></svg></div>
+    <div style="padding:2rem">
+      <h1 id="h-login" class="lg" style="font-size:1.7rem">Sign in</h1><p class="lg mu sm mt1">Admins can manage the crew roster.</p>
+      <form id="loginForm" class="g mt2" novalidate>
+        <div class="lg"><label for="lRole" class="sm">Role</label><select id="lRole" class="in"><option value="student">Student auditor</option><option value="admin">Administrator</option></select></div>
+        <div class="lg"><label for="lKey" class="sm">University ID or admin key</label><input id="lKey" class="in" autocomplete="off" aria-describedby="lErr"><p id="lErr" role="alert" class="sm" style="min-height:1.3rem;color:var(--rd)"></p></div>
+        <button id="lBtn" class="lg btn btn-p">Verify and enter</button>
+      </form>
+      <p class="mu xs mt2">Demo only: this check runs in your browser and is not real security. Students: any ID of 4+ characters. Admin demo key: <code>pulse-admin</code>.</p>
     </div>
+  </div>
+</section>
+</main>
+<footer class="wrap mu sm" style="text-align:center;padding:1rem 1rem 2.5rem">A11yPulse covers a subset of WCAG 2.2. Pair it with real assistive-technology testing.</footer>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-    <!-- ================= VIEW 3: DASHBOARD ================= -->
-    <div id="view-dashboard" class="hidden space-y-6">
-      <div class="glass p-6 rounded-2xl flex justify-between items-center border border-indigo-900/50">
-        <div>
-          <h1 class="text-2xl font-bold text-white mb-1">Control & Management Dashboard</h1>
-          <p class="text-slate-400 text-sm">Managing crew profiles, asset links, and live audio command hooks.</p>
-        </div>
-        <div class="bg-slate-900 px-4 py-3 rounded-xl border border-slate-800 text-right">
-          <span class="text-xs text-slate-400 uppercase block">Active Status</span>
-          <span class="text-sm font-bold text-emerald-400">Connected & Verified</span>
-        </div>
-      </div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const RM=matchMedia('(prefers-reduced-motion: reduce)'),can=()=>!!window.anime&&!RM.matches;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const load=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}};
+const store=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
+const CHEV='<svg class="chev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>';
+const CATS=['Perceivable','Operable','Understandable','Robust'];
+const W={A:3,AA:2,AAA:1},LN={A:'Critical',AA:'Important',AAA:'Enhanced'};
+const ITEMS=[
+['alt','Perceivable','A','Images have text alternatives','Meaningful images have descriptive alt text; decorative ones use alt="".','Screen reader users hear nothing, or a file name, without alt text.','<img src="chart.png">','<img src="chart.png" alt="Sales rose 40% in Q3">\n<img src="swirl.svg" alt="">'],
+['cap','Perceivable','A','Video and audio have captions','Prerecorded media includes captions and a transcript.','Deaf and hard-of-hearing users cannot follow spoken content otherwise.','<video src="intro.mp4" controls></video>','<video src="intro.mp4" controls>\n  <track kind="captions" src="intro.vtt" srclang="en" label="English">\n</video>'],
+['col','Perceivable','A','Color is not the only signal','Errors, links and states also use text, icons or underlines.','Color-blind users cannot tell red from green status cues.','<span style="color:red">Invalid</span>','<span class="err">⚠ Error: invalid email</span>'],
+['con','Perceivable','AA','Text contrast is at least 4.5:1','Normal text meets 4.5:1; large text meets 3:1.','Low-vision users and anyone in sunlight struggle with faint text.','p { color:#aaa; background:#fff; } /* 2.3:1 */','p { color:#595959; background:#fff; } /* 7:1 */'],
+['ref','Perceivable','AA','Content reflows at 400% zoom','No horizontal scrolling at 320px width.','Low-vision users zoom heavily and need one readable column.','.page { width:1200px; }','.page { max-width:1200px; width:100%; }'],
+['key','Operable','A','Everything works with a keyboard','Links, buttons and widgets work with Tab, Enter and Space.','Keyboard-only and switch users cannot use a mouse.','<div onclick="save()">Save</div>','<button type="button" onclick="save()">Save</button>'],
+['trap','Operable','A','No keyboard traps','Focus can always leave a component; modals close with Escape.','A trap locks keyboard users inside a widget.','modal.onkeydown = e => e.preventDefault();','modal.addEventListener("keydown", e => {\n  if (e.key === "Escape") closeModal();\n});'],
+['skip','Operable','A','Skip link bypasses repeated blocks','A "Skip to main content" link is the first focusable element.','Keyboard users otherwise tab through the whole menu on every page.','<nav>…50 links…</nav>\n<main>…</main>','<a href="#main" class="skip">Skip to main content</a>\n<nav>…</nav>\n<main id="main">…</main>'],
+['foc','Operable','AA','Focus is clearly visible','Focused elements show an outline with at least 3:1 contrast.','Keyboard users lose their place without a focus ring.','*:focus { outline:none; }',':focus-visible { outline:3px solid #4f46e5; outline-offset:2px; }'],
+['tgt','Operable','AA','Targets are at least 24×24 CSS px','Buttons and links are large enough or spaced apart (WCAG 2.2).','People with tremors hit the wrong control on tiny targets.','.icon-btn { width:14px; height:14px; }','.icon-btn { min-width:44px; min-height:44px; }'],
+['lab','Understandable','A','Form fields have labels','Each input has a visible, linked label.','Screen readers announce "edit text" with no clue what to type.','<input type="email" placeholder="Email">','<label for="email">Email</label>\n<input id="email" type="email" autocomplete="email">'],
+['err','Understandable','A','Errors are clear and announced','Messages say what went wrong and how to fix it.','Users with cognitive disabilities need specific recovery guidance.','<input class="red-border"><span>Error</span>','<input id="e" aria-invalid="true" aria-describedby="e-msg">\n<p id="e-msg" role="alert">Enter an email like name@site.com</p>'],
+['lng','Understandable','A','Page language is declared','The html element has a valid lang attribute.','Screen readers pick the wrong voice without it.','<html>','<html lang="en">'],
+['sem','Robust','A','Semantic HTML structure','Use real headings, lists, buttons and tables, not styled divs.','Assistive tech relies on native roles to announce content.','<div class="title">News</div>\n<div class="btn">Go</div>','<h2>News</h2>\n<button type="button">Go</button>'],
+['lmk','Robust','A','ARIA landmarks are used','Use header, nav, main and footer; label repeated navs.','Screen reader users jump between regions.','<div id="menu">…</div><div id="content">…</div>','<nav aria-label="Primary">…</nav>\n<main id="content">…</main>'],
+['dom','Robust','A','Valid DOM with unique IDs','No duplicate IDs; elements are properly nested.','Duplicate IDs break label and aria-describedby links.','<input id="n"> <input id="n">','<input id="first"> <input id="last">'],
+['sta','Robust','AA','Status messages use live regions','Toasts and updates are announced without moving focus.','Screen reader users otherwise never learn an action succeeded.','<div class="toast">Saved</div>','<div role="status" aria-live="polite">Saved</div>'],
+['enh','Perceivable','AAA','Enhanced contrast of 7:1','Body text reaches 7:1 contrast.','Users with moderately low vision read without magnifiers.','body { color:#767676; } /* 4.5:1 */','body { color:#3d3d3d; } /* 10:1 */']
+].map(a=>({id:a[0],cat:a[1],lvl:a[2],t:a[3],d:a[4],why:a[5],bad:a[6],good:a[7]}));
+const TOTAL=ITEMS.reduce((s,i)=>s+W[i.lvl],0);
+let checked=new Set(load('a11ypulse:v3',[])),filter='All',query='',mode='list',shown=0,cur=null;
+const saveC=()=>store('a11ypulse:v3',[...checked]);
+const wsum=l=>l.reduce((s,i)=>s+W[i.lvl],0);
+function stats(){const done=wsum(ITEMS.filter(i=>checked.has(i.id)));return{done,pct:Math.round(done/TOTAL*100),per:CATS.map(c=>{const a=ITEMS.filter(i=>i.cat===c),d=a.filter(i=>checked.has(i.id));return{c,pct:Math.round(wsum(d)/wsum(a)*100),n:d.length,len:a.length}})}}
+const grade=p=>p===100?{c:'#a5b4fc',l:'Perfect - Fully Accessible'}:p>=80?{c:'#34d399',l:'Good - WCAG AA Ready'}:p>=50?{c:'#fbbf24',l:'Needs Work - Partially Compliant'}:{c:'#f87171',l:'Critical Issues - Non-Compliant'};
 
-      <div class="glass rounded-2xl p-6 border border-slate-800">
-        <h3 class="text-lg font-bold text-white mb-4">Registered Crew Roster</h3>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="dashboardRoster">
-          <!-- Roster cards -->
-        </div>
-      </div>
-    </div>
+function countTo(el,to,from=0,suf=''){if(!can()){el.textContent=to+suf;return}const o={v:from};anime({targets:o,v:to,round:1,duration:1000,easing:'easeOutExpo',update:()=>el.textContent=o.v+suf})}
+function updateScore(){
+  const s=stats(),g=grade(s.pct),ring=$('#ring'),off=326.73*(1-s.pct/100);
+  ring.setAttribute('stroke',g.c);$('#status').textContent=g.l;$('#status').style.color=g.c;
+  $('#pts').textContent=`${s.done} of ${TOTAL} weighted points`;$('#srScore').textContent=`Score ${s.pct} percent. ${g.l}.`;
+  if(can()){anime.remove(ring);anime({targets:ring,strokeDashoffset:off,duration:900,easing:'easeOutExpo'});countTo($('#pct'),s.pct,shown,'%')}else{ring.style.strokeDashoffset=off;$('#pct').textContent=s.pct+'%'}
+  shown=s.pct;
+  s.per.forEach(p=>{const f=$(`[data-bf="${p.c}"]`);f.style.background=grade(p.pct).c;f.parentNode.setAttribute('aria-valuenow',p.pct);$(`[data-bp="${p.c}"]`).textContent=`${p.n}/${p.len} · ${p.pct}%`;can()?anime({targets:f,width:p.pct+'%',duration:700,easing:'easeOutCubic'}):f.style.width=p.pct+'%'});
+  $('#fixCount').textContent=ITEMS.length-checked.size;$('#sScore').textContent=s.pct+'%';
+}
+function buildBars(){$('#bars').innerHTML=CATS.map(c=>`<li><div class="row bt xs" style="margin-bottom:.3rem"><span>${c}</span><span data-bp="${c}" class="mu" style="font-family:'JetBrains Mono',monospace"></span></div><div class="bar" role="progressbar" aria-label="${c}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div data-bf="${c}"></div></div></li>`).join('')}
+function buildFilters(){$('#filters').innerHTML=['All',...CATS,'Incomplete only'].map(o=>`<button class="chip" data-f="${o}" aria-pressed="${o===filter}">${o}</button>`).join('')}
+function renderList(anim){
+  const q=query.trim().toLowerCase(),its=ITEMS.filter(i=>(filter==='All'||(filter==='Incomplete only'?!checked.has(i.id):i.cat===filter))&&(!q||(i.t+i.d).toLowerCase().includes(q)));
+  $('#list').innerHTML=its.length?its.map(i=>`<li class="cd"><label class="item card"><input type="checkbox" class="sr" data-id="${i.id}" ${checked.has(i.id)?'checked':''}><span class="box" aria-hidden="true"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span style="min-width:0;flex:1"><span class="row"><span class="ttl fd" style="font-weight:700">${esc(i.t)}</span><span class="lv lv${i.lvl}">Level ${i.lvl} · ${LN[i.lvl]} · ${W[i.lvl]} pt${W[i.lvl]>1?'s':''}</span></span><span class="mu sm" style="display:block">${esc(i.d)}</span><span class="mu xs">${i.cat}</span></span></label></li>`).join(''):'<li class="card mu" style="text-align:center">No matching items.</li>';
+  if(anim&&can())anime({targets:'#list .cd',opacity:[0,1],translateY:[16,0],delay:anime.stagger(45),duration:450,easing:'easeOutCubic'});
+}
+const openFix=new Set();
+function renderFixes(){
+  const o=ITEMS.filter(i=>!checked.has(i.id)).sort((a,b)=>W[b.lvl]-W[a.lvl]);
+  $('#fixes').innerHTML=o.length?o.map(i=>`<details data-d="${i.id}" class="card" style="padding:0" ${openFix.has(i.id)?'open':''}><summary>${CHEV}<span class="fd" style="flex:1;font-weight:700">${esc(i.t)}</span><span class="lv lv${i.lvl}">Level ${i.lvl}</span></summary><div class="g" style="padding:0 1rem 1rem"><p class="sm"><b>Why it matters:</b> <span class="mu">${esc(i.why)}</span></p><div class="g g2"><div class="bad"><p class="xs" style="color:var(--rd);font-weight:600">❌ Bad</p><pre>${esc(i.bad)}</pre></div><div class="ok"><p class="xs" style="color:var(--ac);font-weight:600">✅ Accessible fix</p><pre>${esc(i.good)}</pre></div></div></div></details>`).join(''):'<div class="card" style="text-align:center"><p class="fd" style="font-size:1.3rem;font-weight:700;color:var(--ac)">All requirements met</p></div>';
+}
+function setMode(m){mode=m;$$('#modes .chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.m===m));$('#list').hidden=$('#filters').hidden=m!=='list';$('#fixes').hidden=m!=='fix';m==='list'?renderList(true):renderFixes()}
+function toast(m){const t=$('#toast');t.textContent=m;if(can()){anime.remove(t);anime({targets:t,opacity:[0,1,1,0],translateY:[12,0,0,-6],duration:2400,easing:'easeOutQuad'})}else{t.style.opacity=1;setTimeout(()=>t.style.opacity=0,2200)}}
+const bounce=el=>{if(can()&&el)anime({targets:el,scale:[1,.8,1.15,1],duration:450,easing:'easeOutElastic(1,.6)'})};
 
-  </main>
+$('#list').addEventListener('change',e=>{const id=e.target.dataset.id;if(!id)return;e.target.checked?checked.add(id):checked.delete(id);saveC();bounce(e.target.nextElementSibling);updateScore()});
+$('#filters').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(!b)return;filter=b.dataset.f;buildFilters();renderList(true);$('#filters [aria-pressed=true]').focus()});
+$('#modes').addEventListener('click',e=>{const b=e.target.closest('[data-m]');b&&setMode(b.dataset.m)});
+$('#fixes').addEventListener('toggle',e=>{const d=e.target;if(d.dataset&&d.dataset.d)d.open?openFix.add(d.dataset.d):openFix.delete(d.dataset.d)},true);
+$('#search').addEventListener('input',e=>{query=e.target.value;mode!=='list'?setMode('list'):renderList(false)});
+const refresh=()=>{updateScore();mode==='list'?renderList(false):renderFixes()};
+$('#reset').onclick=()=>{if(!confirm('Reset all progress?'))return;checked.clear();saveC();refresh();toast('Progress reset')};
+$('#demo').onclick=()=>{ITEMS.forEach(i=>checked.add(i.id));saveC();refresh();toast('All items checked for demo')};
+async function copy(t,m){try{await navigator.clipboard.writeText(t);toast(m)}catch(e){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');toast(m)}catch(_){toast('Copy failed')}a.remove()}}
+$('#export').onclick=()=>{const s=stats();let md=`# A11yPulse Audit Report\n\n**Date:** ${new Date().toLocaleDateString()}\n**Score:** ${s.pct}% (${grade(s.pct).l})\n\n`;CATS.forEach(c=>{md+=`## ${c}\n`+ITEMS.filter(i=>i.cat===c).map(i=>`- [${checked.has(i.id)?'x':' '}] ${i.t} (Level ${i.lvl})`).join('\n')+'\n\n'});const o=ITEMS.filter(i=>!checked.has(i.id)).sort((a,b)=>W[b.lvl]-W[a.lvl]);md+=`## Action required (${o.length})\n`+(o.length?o.map(i=>`- **Level ${i.lvl}:** ${i.t} — ${i.why}`).join('\n'):'None.');bounce($('#export'));copy(md,'Report copied to clipboard')};
+$('#badgeBtn').onclick=()=>copy(`![A11yPulse](https://img.shields.io/badge/A11yPulse-${stats().pct}%25-34d399)`,'Badge markdown copied');
 
-  <footer class="max-w-6xl mx-auto px-4 py-10 border-t border-slate-800/80 text-center text-xs text-slate-500 mt-20">
-    BiswajitWeb Architecture & Graphics System · Powered by Anime.js & Tailwind CSS.
-  </footer>
+const SAMPLE='<h1>Shop</h1>\n<h3>Deals</h3>\n<img src="team.jpg">\n<button></button>\n<a href="/pricing"></a>\n<input type="email" placeholder="Email">\n<div tabindex="3">Menu</div>';
+$('#snip').value=SAMPLE;$('#sample').onclick=()=>{$('#snip').value=SAMPLE;$('#snip').focus()};
+$('#scan').onclick=()=>{
+  bounce($('#scan'));const html=$('#snip').value,d=new DOMParser().parseFromString(html,'text/html'),out=[],add=(t,l,f,x)=>out.push({t,l,f,x});
+  d.querySelectorAll('img:not([alt])').forEach(el=>{const c=el.cloneNode();c.setAttribute('alt','Describe the image');add('Image is missing alt text','A',el.outerHTML,c.outerHTML)});
+  d.querySelectorAll('input:not([type=hidden]):not([type=submit]):not([type=button]),select,textarea').forEach(el=>{if(el.getAttribute('aria-label')||el.getAttribute('aria-labelledby')||(el.id&&d.querySelector(`label[for="${CSS.escape(el.id)}"]`))||el.closest('label'))return;const c=el.cloneNode(),id=el.id||'field-id';c.id=id;add('Form field has no label','A',el.outerHTML,`<label for="${id}">Field label</label>\n${c.outerHTML}`)});
+  const named=el=>el.textContent.trim()||el.getAttribute('aria-label')||el.getAttribute('aria-labelledby')||el.title||[...el.querySelectorAll('img[alt]')].some(i=>i.alt.trim());
+  d.querySelectorAll('button,[role=button]').forEach(el=>{if(named(el))return;const c=el.cloneNode(true);c.setAttribute('aria-label','Describe the action');add('Button has no accessible name','A',el.outerHTML,c.outerHTML)});
+  d.querySelectorAll('a[href]').forEach(el=>{if(named(el))return;const c=el.cloneNode(true);c.setAttribute('aria-label','Describe the destination');add('Link has no accessible name','A',el.outerHTML,c.outerHTML)});
+  d.querySelectorAll('[tabindex]').forEach(el=>{if(+el.getAttribute('tabindex')>0){const c=el.cloneNode(true);c.setAttribute('tabindex','0');add('Positive tabindex breaks tab order','A',el.outerHTML,c.outerHTML)}});
+  let last=0;d.querySelectorAll('h1,h2,h3,h4,h5,h6').forEach(h=>{const n=+h.tagName[1];if(last&&n>last+1){const k=last+1;add(`Heading skips from h${last} to h${n}`,'A',h.outerHTML,`<h${k}>${h.innerHTML}</h${k}>`)}last=n});
+  if(/<html/i.test(html)&&!d.documentElement.getAttribute('lang'))add('Page language is not declared','A','<html>','<html lang="en">');
+  $('#scanOut').innerHTML=!html.trim()?'<p class="sm" style="color:var(--am)">Paste some HTML first.</p>':!out.length?'<p class="ok sm" style="color:var(--ac)">No issues found. Test with a screen reader to be sure.</p>':`<p class="sm" style="color:var(--am);font-weight:600">${out.length} issue${out.length>1?'s':''} found</p>`+out.map(o=>`<div class="card" style="padding:.8rem"><p class="sm" style="font-weight:600;margin-bottom:.5rem">${esc(o.t)} <span class="lv lv${o.l}">Level ${o.l}</span></p><div class="g g2"><div class="bad"><p class="xs" style="color:var(--rd);font-weight:600">❌ Found</p><pre>${esc(o.f)}</pre></div><div class="ok"><p class="xs" style="color:var(--ac);font-weight:600">✅ Fix</p><pre>${esc(o.x)}</pre></div></div></div>`).join('');
+  if(out.length&&can())anime({targets:'#scanOut > *',opacity:[0,1],translateY:[10,0],delay:anime.stagger(60),duration:400,easing:'easeOutCubic'});
+};
 
-  <script>
-    // CREW PROFILES DATA (EVERY PROFILE NAME IS DISPLAYED AT TOPMOST HOME PAGE)
-    const crewMembers = [
-      { name: "Mateus Aldana", role: "Creative Director", rot: -8, depth: 14, img: "https://cdn.shopify.com/s/files/1/0185/5999/1872/files/enr-1x1-01.jpg?v=1782002435&w=400&h=540&fit=crop&crop=faces&q=80" },
-      { name: "Eli Ramirez", role: "Design Lead", rot: -4, depth: 10, img: "https://cdn.shopify.com/s/files/1/0185/5999/1872/files/dermd_portrait-02.jpg?v=1782006127&w=400&h=540&fit=crop&crop=faces&q=80" },
-      { name: "Naomi Park", role: "Brand Strategist", rot: -1, depth: 8, img: "https://cdn.shopify.com/s/files/1/0185/5999/1872/files/moist-3x4-05.jpg?v=1781995150&w=400&h=540&fit=crop&crop=faces&q=80" },
-      { name: "Theo Vance", role: "Senior Engineer", rot: 2, depth: 12, img: "https://cdn.shopify.com/s/files/1/0185/5999/1872/files/lit-3x4-09.jpg?v=1781989746&w=400&h=540&fit=crop&crop=faces&q=80" },
-      { name: "Kit Bellamy", role: "Art Direction", rot: 6, depth: 9, img: "https://cdn.shopify.com/s/files/1/0185/5999/1872/files/ret-9x16-02.jpg?v=1781973910&w=400&h=540&fit=crop&crop=faces&q=80" }
-    ];
+const lum=h=>{const v=[1,3,5].map(i=>parseInt(h.substr(i,2),16)/255).map(c=>c<=.03928?c/12.92:Math.pow((c+.055)/1.055,2.4));return .2126*v[0]+.7152*v[1]+.0722*v[2]};
+const ratio=(a,b)=>{const x=lum(a),y=lum(b);return(Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
+function contrast(){const f=$('#fg').value,b=$('#bg').value,r=ratio(f,b);$('#cPrev').style.color=f;$('#cPrev').style.background=b;$('#cRatio').textContent=r.toFixed(2)+':1';$('#cBadges').innerHTML=[['AA normal',4.5],['AA large',3],['AAA normal',7],['AAA large',4.5]].map(([n,m])=>`<span class="lv ${r>=m?'lvAAA':'lvA'}">${r>=m?'Pass':'Fail'} · ${n}</span>`).join('')}
+$('#fg').oninput=$('#bg').oninput=contrast;
+$('#autoFix').onclick=()=>{const b=$('#bg').value,k=lum(b)>.4?0:255;let fg=$('#fg').value;for(let t=0;t<=1;t+=.02){fg='#'+[1,3,5].map(i=>Math.round(parseInt(b.substr(i,2),16)*(1-t)+k*t).toString(16).padStart(2,'0')).join('');if(ratio(fg,b)>=4.5)break}$('#fg').value=fg;contrast();toast('Text color adjusted to '+fg)};
 
-    let currentRole = null;
-    try { currentRole = localStorage.getItem('bw_role'); } catch (e) {}
+let crew=load('a11ypulse:crew',[{n:'Mateus Aldana',r:'Creative Director'},{n:'Eli Ramirez',r:'Design Lead'},{n:'Naomi Park',r:'Brand Strategist'},{n:'Theo Vance',r:'Senior Engineer'},{n:'Kit Bellamy',r:'Art Direction'}]);
+const HUES=['#34d399','#818cf8','#fbbf24','#f9a8d4','#67e8f9','#fdba74'],ini=n=>n.split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
+function renderCrew(){
+  $('#strip').innerHTML=crew.map(m=>`<a href="#/crew" class="pill">${esc(m.n)}</a>`).join('');
+  $('#crewGrid').innerHTML=crew.map((m,i)=>`<li><button class="crew card" data-n="${esc(m.n)}" aria-label="Call ${esc(m.n)}, ${esc(m.r)}"><span class="av" style="background:${HUES[i%HUES.length]}">${esc(ini(m.n))}</span><span><span class="fd" style="display:block;font-weight:700">${esc(m.n)}</span><span class="mu sm">${esc(m.r)}</span></span></button></li>`).join('');
+}
+function callMember(n){
+  const el=$$('.crew').find(c=>c.dataset.n===n);if(!el)return;
+  $$('.crew').forEach(c=>c.classList.remove('on'));el.classList.add('on');bounce(el);setTimeout(()=>el.classList.remove('on'),3000);
+  if('speechSynthesis'in window&&!RM.matches){try{speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance('Calling '+n))}catch(e){}}
+}
+function runCommand(raw){
+  const t=raw.trim().toLowerCase(),fb=$('#vfb');if(!t){fb.textContent='Type or speak a command first.';return}
+  const m=crew.find(c=>t.includes(c.n.toLowerCase())||t.includes(c.n.split(' ')[0].toLowerCase()));
+  if(m){fb.textContent=`Calling ${m.n} (${m.r}) first.`;callMember(m.n)}else fb.textContent=`No crew member matched “${raw}”. Try a name from the roster.`;
+}
+$('#run').onclick=()=>{runCommand($('#voice').value);$('#voice').value=''};
+$('#voice').onkeydown=e=>{if(e.key==='Enter')$('#run').click()};
+$('#crewGrid').addEventListener('click',e=>{const b=e.target.closest('.crew');if(b){callMember(b.dataset.n);$('#vfb').textContent=`Calling ${b.dataset.n}.`}});
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+$('#mic').onclick=()=>{if(!SR){toast('Speech input is not supported here. Type instead.');return}const r=new SR();r.lang='en-US';r.onresult=e=>{const t=e.results[0][0].transcript;$('#voice').value=t;runCommand(t)};r.onerror=()=>toast('Could not hear you. Try again.');try{r.start();toast('Listening…')}catch(e){}};
+$('#addForm').onsubmit=e=>{e.preventDefault();crew.push({n:$('#nName').value.trim(),r:$('#nRole').value.trim()});store('a11ypulse:crew',crew);e.target.reset();renderCrew();toast('Member added')};
 
-    // POPULATE TOPMOST TICKER & HERO CARDS ON LOAD
-    function initApp() {
-      // 1. Topmost Ticker Names
-      const tickerContainer = document.getElementById('topProfileTicker');
-      tickerContainer.innerHTML = crewMembers.map(m => `
-        <span class="profile-pill bg-slate-900/90 border border-slate-700/80 px-3 py-1 rounded-full text-indigo-200 flex items-center gap-1.5 cursor-pointer shadow-sm" onclick="highlightMember('${m.name}')">
-          <span class="w-1.5 h-1.5 rounded-full bg-indigo-400"></span> ${m.name}
-        </span>
-      `).join('');
+const POUR=[['Perceivable','Users can see or hear the content.','Alt text, captions, contrast.'],['Operable','Users can navigate and use controls.','Keyboard access, focus, target size.'],['Understandable','Content and behavior are predictable.','Labels, clear errors, page language.'],['Robust','Content works with assistive tech.','Semantic HTML, landmarks, live regions.']];
+$('#pour').innerHTML=POUR.map(p=>`<div class="rv card"><h2>${p[0]}</h2><p class="mu sm mt1">${p[1]}</p><p class="sm mt1">${p[2]}</p></div>`).join('');
 
-      // 2. Hero Cards Row Graphics
-      const cardsRow = document.getElementById('cardsRow');
-      cardsRow.innerHTML = crewMembers.map(m => `
-        <div class="fan-card w-36 sm:w-44 h-52 sm:h-64 rounded-2xl overflow-hidden border-2 border-slate-700/80 shadow-2xl -mx-3 bg-slate-800 transition transform hover:scale-105" data-rot="${m.rot}" data-depth="${m.depth}">
-          <div class="relative w-full h-full">
-            <img src="${m.img}" class="w-full h-full object-cover" alt="${m.name}" />
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent flex flex-col justify-end p-3">
-              <span class="text-xs font-bold text-white">${m.name}</span>
-              <span class="text-[10px] text-indigo-400 font-medium">${m.role}</span>
-            </div>
-          </div>
-        </div>
-      `).join('');
+let role=load('a11ypulse:role',null);
+function authUI(){$('#loginLink').hidden=!!role;$('#authBox').hidden=!role;$('#roleBadge').textContent=role?role.toUpperCase():'';$('#addForm').hidden=role!=='admin'}
+$('#loginForm').onsubmit=e=>{
+  e.preventDefault();const r=$('#lRole').value,k=$('#lKey').value.trim(),err=$('#lErr'),ok=r==='admin'?k==='pulse-admin':k.length>=4;
+  if(!ok){err.textContent=r==='admin'?'Admin key not recognized.':'Enter an ID with at least 4 characters.';$('#lKey').setAttribute('aria-invalid','true');if(can())anime({targets:'#loginForm',translateX:[0,-10,10,-8,8,0],duration:420,easing:'easeInOutSine'});return}
+  err.textContent='';role=r;store('a11ypulse:role',r);authUI();toast('Signed in as '+r);
+  const go=()=>navTo('home');can()?anime({targets:'#lBtn',scale:[1,.92,1.06,1],duration:400,complete:go}):go();
+};
+$('#logout').onclick=()=>{role=null;try{localStorage.removeItem('a11ypulse:role')}catch(e){}authUI();toast('Signed out')};
 
-      // 3. Dashboard Roster
-      const roster = document.getElementById('dashboardRoster');
-      if (roster) {
-        roster.innerHTML = crewMembers.map(m => `
-          <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl flex items-center gap-3">
-            <img src="${m.img}" class="w-12 h-12 rounded-lg object-cover" />
-            <div>
-              <h4 class="font-bold text-sm text-white">${m.name}</h4>
-              <p class="text-xs text-slate-400">${m.role}</p>
-            </div>
-          </div>
-        `).join('');
-      }
+const PAGES=['home','audit','tools','crew','learn','login'];
+function navTo(p){try{history.replaceState(null,'','#/'+p)}catch(e){}route(p)}
+function route(p){
+  if(!PAGES.includes(p))p='home';
+  $$('.page').forEach(s=>s.hidden=s.id!=='p-'+p);
+  $$('.nl').forEach(a=>a.dataset.p===p?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));
+  document.title=p[0].toUpperCase()+p.slice(1)+' — A11yPulse';cur=p;
+  if(p==='audit')setMode(mode);
+  window.scrollTo(0,0);
+  if(can()){
+    anime({targets:`#p-${p} .rv`,opacity:[0,1],translateY:[18,0],delay:anime.stagger(80),duration:650,easing:'easeOutCubic'});
+    if(p==='home'){const b=$('#beat'),L=b.getTotalLength();b.style.strokeDasharray=L;anime.remove(b);anime({targets:b,strokeDashoffset:[L,0],duration:1800,easing:'easeInOutSine',loop:true,direction:'alternate'});countTo($('#sItems'),ITEMS.length)}
+    if(p==='login'){anime({targets:'.pr',r:[12,95],opacity:[.8,0],duration:2600,delay:anime.stagger(850),loop:true,easing:'easeOutSine'});anime({targets:'.lg',opacity:[0,1],translateX:[-14,0],delay:anime.stagger(100,{start:200}),duration:500,easing:'easeOutCubic'})}
+  }else if(p==='home')$('#sItems').textContent=ITEMS.length;
+  $('#main').focus({preventScroll:true});
+}
+document.addEventListener('click',e=>{const a=e.target.closest('a[href^="#/"]');if(!a)return;e.preventDefault();navTo(a.getAttribute('href').slice(2))});
+addEventListener('hashchange',()=>{const p=location.hash.slice(2);if(p!==cur)route(p)});
 
-      checkAuthState();
-      if (currentRole) {
-        switchView('dashboard');
-      }
-    }
-
-    // VIEW ROUTING
-    function switchView(viewName) {
-      ['landing', 'login', 'dashboard'].forEach(v => {
-        const el = document.getElementById('view-' + v);
-        if (el) el.classList.add('hidden');
-      });
-      document.getElementById('view-' + viewName).classList.remove('hidden');
-
-      if (viewName === 'landing') playLandingAnimations();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    // AUTH HANDLING
-    function handlePortalLogin(e) {
-      e.preventDefault();
-      const role = document.getElementById('loginRole').value;
-      currentRole = role;
-      try { localStorage.setItem('bw_role', role); } catch (err) {}
-      checkAuthState();
-      switchView('dashboard');
-    }
-
-    function logout() {
-      currentRole = null;
-      try { localStorage.removeItem('bw_role'); } catch (err) {}
-      checkAuthState();
-      switchView('landing');
-    }
-
-    function checkAuthState() {
-      const navActions = document.getElementById('navActions');
-      const loginBtn = document.getElementById('loginNavBtn');
-      const roleBadge = document.getElementById('navRoleBadge');
-
-      if (currentRole) {
-        navActions.classList.remove('hidden');
-        navActions.classList.add('flex');
-        loginBtn.classList.add('hidden');
-        roleBadge.innerText = currentRole.toUpperCase() + ' ACCESS';
-      } else {
-        navActions.classList.add('hidden');
-        navActions.classList.remove('flex');
-        loginBtn.classList.remove('hidden');
-      }
-    }
-
-    // VOICE / HEARING COMMAND LOGIC (CALLS RECOGNIZED MEMBER'S NAME FIRST)
-    function triggerVoiceCommand() {
-      const input = document.getElementById('voiceCommandInput');
-      const feedback = document.getElementById('voiceFeedback');
-      const text = input.value.trim().toLowerCase();
-
-      if (!text) {
-        feedback.innerText = "⚠️ Please enter or simulate a voice command.";
-        return;
-      }
-
-      const foundMember = crewMembers.find(m => text.includes(m.name.toLowerCase()));
-
-      if (foundMember) {
-        feedback.innerText = `🔊 Audio Command Recognized! Calling "${foundMember.name}" (${foundMember.role}) first.`;
-        highlightMember(foundMember.name);
-      } else {
-        feedback.innerText = `🎙️ Command processed: "${input.value}". Executing global action.`;
-      }
-      input.value = "";
-    }
-
-    // HIGHLIGHT MEMBER VISUALLY WHEN CALLED
-    function highlightMember(name) {
-      switchView('landing');
-      const cards = document.querySelectorAll('.fan-card');
-      cards.forEach(card => {
-        const img = card.querySelector('img');
-        if (img && img.alt === name) {
-          anime({
-            targets: card,
-            scale: [1, 1.15, 1],
-            rotate: '0deg',
-            duration: 800,
-            easing: 'spring(1, 80, 10, 0)'
-          });
-          card.style.borderColor = '#6366f1';
-          setTimeout(() => card.style.borderColor = 'rgba(51, 65, 85, 0.8)', 2500);
-        }
-      });
-    }
-
-    // ANIME.JS TIMELINES & PARALLAX
-    function playLandingAnimations() {
-      if (typeof anime === 'undefined') return;
-      const tl = anime.timeline({ easing: 'easeOutExpo' });
-      tl.add({
-        targets: '#heroHeading .word',
-        translateY: [30, 0],
-        opacity: [0, 1],
-        delay: anime.stagger(100),
-        duration: 800
-      })
-      .add({
-        targets: '#cardsRow .fan-card',
-        translateY: [60, 0],
-        opacity: [0, 1],
-        rotate: (el) => el.getAttribute('data-rot') || 0,
-        delay: anime.stagger(70, { from: 'center' }),
-        duration: 900
-      }, '-=500');
-
-      document.querySelectorAll('.stat-num').forEach(el => {
-        const target = parseInt(el.getAttribute('data-count'), 10);
-        anime({
-          targets: el,
-          innerHTML: [0, target],
-          round:
+buildBars();buildFilters();renderCrew();contrast();authUI();updateScore();
+route(location.hash.slice(2));
+</script>
+</body>
+</html>
