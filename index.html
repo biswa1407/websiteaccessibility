@@ -1,338 +1,1218 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth dark">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="color-scheme" content="dark">
-<title>A11yPulse — Web Accessibility Auditor & Checklist</title>
-<meta name="description" content="Audit your site against WCAG 2.2 with a weighted checklist, code fixes, an HTML scanner and a contrast checker.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%92%A0%3C/text%3E%3C/svg%3E">
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@400;500&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
-<style>
-:root{--bg:#020617;--sf:rgba(255,255,255,.05);--bd:rgba(255,255,255,.11);--tx:#e8eef6;--mu:#98a6b8;--ac:#34d399;--acd:#052e22;--in:#818cf8;--rd:#f87171;--am:#fbbf24;color-scheme:dark}
-*{box-sizing:border-box}[hidden]{display:none!important}
-html{scroll-behavior:smooth}
-body{margin:0;min-height:100vh;color:var(--tx);font:16px/1.6 Figtree,system-ui,sans-serif;background:radial-gradient(40rem 28rem at 6% -5%,rgba(99,102,241,.22),transparent 60%),radial-gradient(34rem 26rem at 100% 8%,rgba(52,211,153,.11),transparent 60%),radial-gradient(30rem 24rem at 55% 110%,rgba(251,191,36,.08),transparent 60%),var(--bg);background-attachment:fixed}
-h1,h2,h3,.fd{font-family:'Bricolage Grotesque',system-ui,sans-serif;letter-spacing:-.02em;margin:0}
-h1{font-size:clamp(2rem,6vw,3.6rem);font-weight:800;line-height:1.1}h2{font-size:1.3rem;font-weight:700}
-p{margin:0}a{color:inherit;text-decoration:none}
-.mu{color:var(--mu)}.sm{font-size:.85rem}.xs{font-size:.75rem}.mt1{margin-top:.5rem}.mt2{margin-top:1rem}.mt3{margin-top:1.5rem}.mt4{margin-top:2.5rem}
-.wrap{max-width:72rem;margin:0 auto;padding:0 1rem}
-.row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}.bt{justify-content:space-between}
-.g{display:grid;gap:1rem}.g2{grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
-.hdr{position:sticky;top:0;z-index:40;background:rgba(2,6,23,.88);backdrop-filter:blur(12px);border-bottom:1px solid var(--bd);padding-top:env(safe-area-inset-top,0)}
-.hdr .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:.6rem;padding-top:.7rem;padding-bottom:.7rem}
-.logo{display:grid;place-items:center;width:2.2rem;height:2.2rem;border-radius:.6rem;background:linear-gradient(135deg,var(--in),var(--ac));color:#022c22}
-nav{display:flex;gap:.25rem;overflow-x:auto;max-width:100%}
-.nl{padding:.4rem .8rem;border-radius:.6rem;color:var(--mu);font-weight:500;font-size:.9rem;white-space:nowrap;transition:.2s}
-.nl:hover{color:var(--tx)}.nl[aria-current=page]{color:var(--tx);background:rgba(255,255,255,.09)}
-.card{background:var(--sf);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--bd);border-radius:1rem;padding:1.2rem}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;padding:.55rem 1rem;border-radius:.7rem;font:600 .88rem Figtree,sans-serif;border:1px solid var(--bd);background:transparent;color:var(--tx);cursor:pointer;transition:.2s}
-.btn:hover{background:rgba(255,255,255,.09)}.btn-p{background:var(--ac);border-color:var(--ac);color:var(--acd)}.btn-p:hover{background:#6ee7b7}.btn-i{background:var(--in);border-color:var(--in);color:#fff}.btn-i:hover{background:#a5b4fc;color:#1e1b4b}
-.in{width:100%;background:rgba(2,6,23,.7);border:1px solid var(--bd);border-radius:.7rem;padding:.6rem .8rem;color:var(--tx);font:inherit}
-:focus-visible{outline:2px solid var(--in);outline-offset:2px}.in:focus{outline:2px solid var(--in);outline-offset:1px}
-.chip{padding:.3rem .8rem;border-radius:99px;border:1px solid var(--bd);font:.85rem Figtree,sans-serif;color:var(--mu);cursor:pointer;background:transparent;transition:.2s}
-.chip[aria-pressed=true]{background:var(--in);border-color:var(--in);color:#fff;font-weight:600}
-.lv{font-size:.72rem;font-weight:600;padding:.08rem .55rem;border-radius:99px;border:1px solid;white-space:nowrap}
-.lvA{color:var(--rd);border-color:#7f3a3a}.lvAA{color:var(--am);border-color:#7a6320}.lvAAA{color:var(--in);border-color:#4a4f9a}
-.pill{padding:.1rem .7rem;border:1px solid var(--bd);border-radius:99px;font-size:.78rem;transition:.2s}.pill:hover{border-color:var(--in)}
-.item{display:flex;gap:1rem;cursor:pointer;transition:border-color .2s}.item:hover{border-color:rgba(129,140,248,.6)}
-.item:has(input:checked){border-color:rgba(52,211,153,.5);background:rgba(52,211,153,.07)}
-.item:has(input:focus-visible){outline:2px solid var(--in);outline-offset:2px}
-.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.box{display:grid;place-items:center;width:1.5rem;height:1.5rem;flex:none;border-radius:.45rem;border:2px solid #5b6b80;transition:.2s}
-.box svg{width:.95rem;height:.95rem;opacity:0;stroke:var(--acd);stroke-width:3.2;fill:none}
-input:checked+.box{background:var(--ac);border-color:var(--ac)}input:checked+.box svg{opacity:1}
-.item:has(input:checked) .ttl{color:var(--mu);text-decoration:line-through}
-pre{font:.78rem/1.55 'JetBrains Mono',monospace;white-space:pre-wrap;word-break:break-word;margin:0}
-details>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:.7rem;padding:1rem}summary::-webkit-details-marker{display:none}
-details[open] .chev{transform:rotate(90deg)}.chev{transition:.2s;width:1rem;height:1rem;stroke:currentColor;fill:none;stroke-width:2}
-.bad{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.3);border-radius:.7rem;padding:.7rem}.ok{background:rgba(52,211,153,.08);border:1px solid rgba(52,211,153,.3);border-radius:.7rem;padding:.7rem}
-.bar{height:.5rem;border-radius:99px;background:rgba(255,255,255,.1);overflow:hidden}.bar>div{height:100%;width:0;border-radius:99px}
-.audit-top{display:grid;gap:1rem;grid-template-columns:1fr}
-@media(min-width:768px){.audit-top{grid-template-columns:260px 1fr;position:sticky;top:4.2rem;z-index:30;background:rgba(2,6,23,.82);backdrop-filter:blur(10px);padding:.5rem 0;border-radius:1rem}.login-art{display:grid!important}}
-.gauge{position:relative;width:7rem;height:7rem;margin:0 auto}.gauge>div{position:absolute;inset:0;display:grid;place-items:center}
-.av{width:3rem;height:3rem;border-radius:50%;display:grid;place-items:center;font:800 1rem 'Bricolage Grotesque';color:#052e22;flex:none}
-.crew{display:flex;align-items:center;gap:1rem;width:100%;text-align:left;color:inherit;cursor:pointer;font:inherit;transition:border-color .3s,background .3s}.crew.on{border-color:var(--ac);background:rgba(52,211,153,.12)}
-.grid4{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr))}
-.hero{display:grid;gap:2.5rem;align-items:center}@media(min-width:900px){.hero{grid-template-columns:1.1fr .9fr}}
-.login-art{display:none;place-items:center;background:rgba(52,211,153,.08)}.login-box{display:grid;max-width:46rem;margin:0 auto;padding:0;overflow:hidden}@media(min-width:768px){.login-box{grid-template-columns:1fr 1fr}}
-.toast{position:fixed;left:50%;bottom:1.5rem;transform:translateX(-50%);z-index:60;background:#1b2433;border:1px solid var(--bd);border-radius:.8rem;padding:.6rem 1rem;font-size:.9rem;opacity:0;pointer-events:none}
-.skip{position:absolute;left:.7rem;top:-4rem;background:var(--in);color:#fff;padding:.5rem 1rem;border-radius:.6rem;z-index:99}.skip:focus{top:.7rem}
-@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>A11yPulse — Web Accessibility Auditor & Checklist Tool</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.2/anime.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #020617;
+      color: #f8fafc;
+      overflow-x: hidden;
+    }
+    code, pre, .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass {
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-hover {
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+    }
+    .glass-hover:hover {
+      border-color: rgba(99, 102, 241, 0.4);
+      box-shadow: 0 12px 30px -10px rgba(99, 102, 241, 0.18);
+    }
+    .bg-grid {
+      background-size: 36px 36px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+    }
+    /* Custom accessible focus ring */
+    *:focus-visible {
+      outline: 2px solid #818cf8;
+      outline-offset: 2px;
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
 </head>
-<body>
-<a class="skip" href="#main">Skip to main content</a>
-<header class="hdr"><div class="wrap">
-  <a href="#/home" class="row" style="gap:.6rem" aria-label="A11yPulse home"><span class="logo" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></span><span class="fd" style="font-size:1.25rem;font-weight:800">A11yPulse</span></a>
-  <nav aria-label="Main"><a class="nl" href="#/home" data-p="home">Home</a><a class="nl" href="#/audit" data-p="audit">Audit <span id="fixCount" class="lv lvAA">0</span></a><a class="nl" href="#/tools" data-p="tools">Tools</a><a class="nl" href="#/crew" data-p="crew">Crew</a><a class="nl" href="#/learn" data-p="learn">Learn</a></nav>
-  <div class="row"><a id="loginLink" href="#/login" class="btn btn-p">Sign in</a><span id="authBox" class="row" hidden><span id="roleBadge" class="lv lvAAA"></span><button id="logout" class="btn xs">Sign out</button></span></div>
-</div></header>
+<body class="min-h-screen bg-grid selection:bg-indigo-500 selection:text-white">
 
-<main id="main" tabindex="-1" class="wrap" style="padding-top:2rem;padding-bottom:2rem;outline:none">
+  <!-- SKIP TO CONTENT LINK FOR KEYBOARD USERS -->
+  <a href="#main-workspace" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-indigo-600 focus:text-white focus:px-4 focus:py-2.5 focus:rounded-xl focus:font-semibold focus:shadow-2xl">
+    Skip to main audit workspace
+  </a>
 
-<section id="p-home" class="page" aria-labelledby="h-home">
-  <div class="rv row sm" style="margin-bottom:2rem"><span class="mu">Crew online:</span><span id="strip" class="row"></span></div>
-  <div class="hero">
-    <div>
-      <h1 id="h-home" class="rv">Make every page work for <span style="color:var(--ac)">everyone</span>.</h1>
-      <p class="rv mu mt2" style="font-size:1.1rem;max-width:34rem">Audit against WCAG 2.2, get ready-to-paste fixes, scan snippets and watch your score climb as you go.</p>
-      <div class="rv row mt3"><a href="#/audit" class="btn btn-p">Start an audit</a><a href="#/tools" class="btn">Scan a snippet</a></div>
-    </div>
-    <div class="rv card">
-      <svg viewBox="0 0 400 110" style="width:100%" role="img" aria-label="Animated heartbeat line"><path id="beat" d="M0 60H110l16-40 24 80 20-60 14 20H400" fill="none" stroke="#34d399" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      <div class="g mt2" style="grid-template-columns:repeat(3,1fr);text-align:center">
-        <div><div id="sScore" class="fd" style="font-size:1.9rem;font-weight:800;color:var(--ac)">0%</div><div class="mu xs">your score</div></div>
-        <div><div id="sItems" class="fd" style="font-size:1.9rem;font-weight:800">0</div><div class="mu xs">requirements</div></div>
-        <div><div class="fd" style="font-size:1.9rem;font-weight:800;color:var(--in)">4</div><div class="mu xs">POUR areas</div></div>
+  <!-- AMBIENT GLOW BACKGROUND -->
+  <div class="fixed inset-0 pointer-events-none overflow-hidden -z-10" aria-hidden="true">
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-indigo-600/15 rounded-full blur-3xl"></div>
+    <div class="absolute top-1/3 -right-40 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-40 left-1/3 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl"></div>
+  </div>
+
+  <!-- TOP NAVIGATION BAR -->
+  <header class="sticky top-0 z-40 border-b border-slate-800/80 bg-slate-950/85 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+      <!-- Brand -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 via-indigo-600 to-emerald-400 flex items-center justify-center shadow-lg shadow-indigo-500/25 text-slate-950 font-black text-lg">
+          <i data-lucide="activity" class="w-5 h-5 text-white"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-extrabold text-lg tracking-tight text-white">A11y<span class="text-indigo-400">Pulse</span></span>
+            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">WCAG 2.2</span>
+          </div>
+          <p class="text-[11px] text-slate-400 hidden sm:block">Web Accessibility Auditor & Live Remediation Engine</p>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="flex items-center gap-2 sm:gap-2.5">
+        <button type="button" id="btnCheckAll" onclick="checkAllDemo(this)" aria-label="Check all items for demo" class="text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 px-3 py-2 rounded-xl flex items-center gap-1.5 transition">
+          <i data-lucide="check-check" class="w-3.5 h-3.5 text-emerald-400"></i>
+          <span class="hidden sm:inline">Check All (Demo)</span>
+        </button>
+        <button type="button" id="btnReset" onclick="resetProgress(this)" aria-label="Reset audit progress" class="text-xs font-semibold bg-slate-900 hover:bg-rose-950/50 text-slate-300 hover:text-rose-300 border border-slate-700/80 hover:border-rose-800/60 px-3 py-2 rounded-xl flex items-center gap-1.5 transition">
+          <i data-lucide="rotate-ccw" class="w-3.5 h-3.5 text-rose-400"></i>
+          <span class="hidden sm:inline">Reset Progress</span>
+        </button>
+        <button type="button" id="btnExport" onclick="exportAuditReport(this)" aria-label="Export Markdown audit report to clipboard" class="text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white px-3.5 py-2 rounded-xl flex items-center gap-1.5 shadow-lg shadow-indigo-600/25 transition">
+          <i data-lucide="clipboard-check" class="w-3.5 h-3.5"></i>
+          <span>Export Audit Report</span>
+        </button>
       </div>
     </div>
-  </div>
-  <div class="grid4 mt4">
-    <a href="#/audit" class="rv card"><h2>Weighted checklist</h2><p class="mu sm mt1">Level A, AA and AAA items scored by impact.</p></a>
-    <a href="#/audit" class="rv card"><h2>Code fixes</h2><p class="mu sm mt1">Bad versus accessible snippets for every open item.</p></a>
-    <a href="#/tools" class="rv card"><h2>Scanner and contrast</h2><p class="mu sm mt1">Paste HTML or pick colors and see results.</p></a>
-    <a href="#/crew" class="rv card"><h2>Voice crew roster</h2><p class="mu sm mt1">Say a name and the roster calls that person first.</p></a>
-  </div>
-</section>
+  </header>
 
-<section id="p-audit" class="page" hidden aria-labelledby="h-audit">
-  <h1 id="h-audit" class="rv" style="font-size:2rem">Accessibility audit</h1>
-  <p class="rv mu mt1">Level A counts 3 points, AA 2 and AAA 1. Progress saves in this browser.</p>
-  <div class="audit-top mt2">
-    <div class="rv card" style="text-align:center">
-      <div class="gauge"><svg viewBox="0 0 120 120" style="width:100%;height:100%" aria-hidden="true"><circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,.1)" stroke-width="9"/><circle id="ring" cx="60" cy="60" r="52" fill="none" stroke="#f87171" stroke-width="9" stroke-linecap="round" stroke-dasharray="326.73" stroke-dashoffset="326.73" transform="rotate(-90 60 60)"/></svg><div><span id="pct" class="fd" style="font-size:1.9rem;font-weight:800">0%</span></div></div>
-      <p id="status" class="fd mt1" style="font-weight:700"></p><p id="pts" class="mu xs"></p><p id="srScore" class="sr" role="status" aria-live="polite"></p>
+  <main id="main-workspace" class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-8">
+
+    <!-- ================= A. LIVE SCORE DASHBOARD (TOP PANEL) ================= -->
+    <section aria-labelledby="dashboard-heading" class="glass rounded-3xl p-5 sm:p-7 shadow-2xl relative overflow-hidden">
+      <h2 id="dashboard-heading" class="sr-only">Live Accessibility Compliance Score Dashboard</h2>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+        
+        <!-- Circular Score Gauge & Status -->
+        <div class="lg:col-span-5 flex flex-col sm:flex-row items-center gap-6 border-b lg:border-b-0 lg:border-r border-slate-800/80 pb-6 lg:pb-0 lg:pr-6">
+          <div class="relative w-36 h-36 flex-shrink-0 flex items-center justify-center">
+            <svg class="w-full h-full -rotate-90 transform" viewBox="0 0 120 120" role="img" aria-label="Accessibility compliance gauge">
+              <!-- Track -->
+              <circle cx="60" cy="60" r="50" stroke="rgba(30, 41, 59, 0.9)" stroke-width="10" fill="transparent" />
+              <!-- Animated Progress Ring -->
+              <circle id="scoreRing" cx="60" cy="60" r="50" stroke="#ef4444" stroke-width="10" stroke-dasharray="314.159" stroke-dashoffset="314.159" stroke-linecap="round" fill="transparent" />
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+              <div class="text-3xl font-black tracking-tight text-white flex items-baseline">
+                <span id="scoreValue" aria-live="polite">0</span><span class="text-lg text-slate-400 font-bold">%</span>
+              </div>
+              <span class="text-[10px] uppercase tracking-widest text-slate-400 font-semibold mt-0.5">Weighted</span>
+            </div>
+          </div>
+
+          <div class="text-center sm:text-left space-y-2.5 flex-1">
+            <div id="statusBadge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30">
+              <span class="w-2 h-2 rounded-full bg-rose-400 animate-pulse" id="statusDot"></span>
+              <span id="statusText">Critical Issues - Non-Compliant</span>
+            </div>
+            <h1 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight">WCAG 2.2 Audit Matrix</h1>
+            <p class="text-xs text-slate-400 leading-relaxed" id="scoreSummaryText">
+              0 of 12 checks passed (0 / 26 weighted points). Complete Level A critical checks first to eliminate high-severity barriers.
+            </p>
+          </div>
+        </div>
+
+        <!-- POUR Category Breakdown Mini-Bars -->
+        <div class="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          
+          <!-- 1. Perceivable -->
+          <div class="bg-slate-900/70 border border-slate-800/80 rounded-2xl p-4 space-y-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="p-1.5 rounded-lg bg-indigo-500/15 text-indigo-400"><i data-lucide="eye" class="w-4 h-4"></i></span>
+                <div>
+                  <h3 class="text-xs font-bold text-white uppercase tracking-wider">1. Perceivable</h3>
+                  <p class="text-[11px] text-slate-400">Alt text, Contrast, Captions</p>
+                </div>
+              </div>
+              <span id="pct-Perceivable" class="text-xs font-mono font-bold text-indigo-400">0%</span>
+            </div>
+            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+              <div id="bar-Perceivable" class="h-full bg-indigo-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- 2. Operable -->
+          <div class="bg-slate-900/70 border border-slate-800/80 rounded-2xl p-4 space-y-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="p-1.5 rounded-lg bg-emerald-500/15 text-emerald-400"><i data-lucide="keyboard" class="w-4 h-4"></i></span>
+                <div>
+                  <h3 class="text-xs font-bold text-white uppercase tracking-wider">2. Operable</h3>
+                  <p class="text-[11px] text-slate-400">Keyboard nav, Focus, No traps</p>
+                </div>
+              </div>
+              <span id="pct-Operable" class="text-xs font-mono font-bold text-emerald-400">0%</span>
+            </div>
+            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+              <div id="bar-Operable" class="h-full bg-emerald-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- 3. Understandable -->
+          <div class="bg-slate-900/70 border border-slate-800/80 rounded-2xl p-4 space-y-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="p-1.5 rounded-lg bg-amber-500/15 text-amber-400"><i data-lucide="book-open-check" class="w-4 h-4"></i></span>
+                <div>
+                  <h3 class="text-xs font-bold text-white uppercase tracking-wider">3. Understandable</h3>
+                  <p class="text-[11px] text-slate-400">Form labels, Errors, Lang tag</p>
+                </div>
+              </div>
+              <span id="pct-Understandable" class="text-xs font-mono font-bold text-amber-400">0%</span>
+            </div>
+            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+              <div id="bar-Understandable" class="h-full bg-amber-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- 4. Robust -->
+          <div class="bg-slate-900/70 border border-slate-800/80 rounded-2xl p-4 space-y-2">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="p-1.5 rounded-lg bg-purple-500/15 text-purple-400"><i data-lucide="code-2" class="w-4 h-4"></i></span>
+                <div>
+                  <h3 class="text-xs font-bold text-white uppercase tracking-wider">4. Robust</h3>
+                  <p class="text-[11px] text-slate-400">Semantic HTML, ARIA, Valid DOM</p>
+                </div>
+              </div>
+              <span id="pct-Robust" class="text-xs font-mono font-bold text-purple-400">0%</span>
+            </div>
+            <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+              <div id="bar-Robust" class="h-full bg-purple-500 rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= MAIN 2-COLUMN WORKSPACE ================= -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+
+      <!-- LEFT COLUMN (7 COLS): INTERACTIVE CHECKLIST WITH WEIGHTED SCORING -->
+      <section aria-labelledby="checklist-heading" class="lg:col-span-7 space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 id="checklist-heading" class="text-lg font-bold text-white flex items-center gap-2">
+              <i data-lucide="list-checks" class="w-5 h-5 text-indigo-400"></i>
+              Interactive WCAG 2.2 Checklist
+            </h2>
+            <p class="text-xs text-slate-400">Weighted scoring: <span class="text-rose-400 font-semibold">Level A (3 pts)</span> · <span class="text-amber-400 font-semibold">Level AA (2 pts)</span> · <span class="text-emerald-400 font-semibold">Level AAA (1 pt)</span></p>
+          </div>
+          <span id="filterCounter" class="text-xs font-mono bg-slate-900 border border-slate-800 text-slate-300 px-3 py-1.5 rounded-xl self-start sm:self-auto">
+            Showing 12 items
+          </span>
+        </div>
+
+        <!-- Category Filter Tabs -->
+        <div role="tablist" aria-label="Filter checklist by category" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
+          <button role="tab" aria-selected="true" onclick="setFilter('All', this)" class="filter-tab text-xs font-semibold px-3.5 py-2 rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-600/20 transition flex-shrink-0">
+            All <span class="ml-1 opacity-75 text-[10px]" id="tabCount-All">12</span>
+          </button>
+          <button role="tab" aria-selected="false" onclick="setFilter('Perceivable', this)" class="filter-tab text-xs font-semibold px-3.5 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800 transition flex-shrink-0">
+            Perceivable
+          </button>
+          <button role="tab" aria-selected="false" onclick="setFilter('Operable', this)" class="filter-tab text-xs font-semibold px-3.5 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800 transition flex-shrink-0">
+            Operable
+          </button>
+          <button role="tab" aria-selected="false" onclick="setFilter('Understandable', this)" class="filter-tab text-xs font-semibold px-3.5 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800 transition flex-shrink-0">
+            Understandable
+          </button>
+          <button role="tab" aria-selected="false" onclick="setFilter('Robust', this)" class="filter-tab text-xs font-semibold px-3.5 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800 transition flex-shrink-0">
+            Robust
+          </button>
+          <button role="tab" aria-selected="false" onclick="setFilter('Incomplete', this)" class="filter-tab text-xs font-semibold px-3.5 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-amber-300 border border-amber-500/30 transition flex-shrink-0 flex items-center gap-1">
+            <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i> Incomplete Only
+          </button>
+        </div>
+
+        <!-- Checklist Cards Container -->
+        <div id="checklistContainer" class="space-y-3" role="region" aria-live="polite">
+          <!-- Populated dynamically via JS -->
+        </div>
+      </section>
+
+      <!-- RIGHT COLUMN (5 COLS): SMART FIX ENGINE + LIVE SNIPPET & CONTRAST TESTER -->
+      <aside class="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
+
+        <!-- Right Panel Mode Switcher -->
+        <div class="glass p-1.5 rounded-2xl flex items-center gap-1.5 border border-slate-800">
+          <button type="button" id="tabBtnFixes" onclick="switchRightPanel('fixes')" class="flex-1 py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 bg-indigo-600 text-white shadow transition">
+            <i data-lucide="wrench" class="w-4 h-4"></i>
+            <span>Action Required & Code Fixes</span>
+            <span id="uncheckedCountBadge" class="px-1.5 py-0.5 text-[10px] rounded-full bg-slate-950/60 text-indigo-200">12</span>
+          </button>
+          <button type="button" id="tabBtnScanner" onclick="switchRightPanel('scanner')" class="flex-1 py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 text-slate-400 hover:text-white transition">
+            <i data-lucide="scan-code" class="w-4 h-4 text-emerald-400"></i>
+            <span>Live HTML & Contrast Lab</span>
+          </button>
+        </div>
+
+        <!-- PANEL 1: SMART SUGGESTED IMPROVEMENTS & CODE FIX ENGINE -->
+        <div id="panelFixes" class="glass rounded-3xl p-5 sm:p-6 border border-slate-800/90 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800/80 pb-3.5">
+            <div>
+              <h2 class="text-base font-bold text-white flex items-center gap-2">
+                <i data-lucide="sparkles" class="w-4 h-4 text-amber-400"></i>
+                Remediation Priority Queue
+              </h2>
+              <p class="text-xs text-slate-400 mt-0.5">Sorted automatically by highest impact (Level A first)</p>
+            </div>
+          </div>
+
+          <div id="suggestionsContainer" class="space-y-4 max-h-[640px] overflow-y-auto pr-1">
+            <!-- Populated dynamically via JS -->
+          </div>
+        </div>
+
+        <!-- PANEL 2: BONUS MINI-TOOL — LIVE HTML SNIPPET & CONTRAST TESTER -->
+        <div id="panelScanner" class="hidden glass rounded-3xl p-5 sm:p-6 border border-slate-800/90 space-y-6">
+          
+          <!-- Part 1: Raw HTML Quick Scanner -->
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <div>
+                <h2 class="text-base font-bold text-white flex items-center gap-2">
+                  <i data-lucide="terminal" class="w-4 h-4 text-emerald-400"></i>
+                  Live HTML Snippet Auditor
+                </h2>
+                <p class="text-xs text-slate-400">Scan raw HTML for missing <code class="text-indigo-300">alt</code>, <code class="text-indigo-300">&lt;label&gt;</code>, or empty buttons.</p>
+              </div>
+              <button type="button" onclick="loadSampleBadHTML()" class="text-[11px] font-semibold text-indigo-400 hover:text-indigo-300 underline">
+                Load Bad Sample
+              </button>
+            </div>
+
+            <label for="htmlSnippetInput" class="sr-only">Paste raw HTML snippet to scan</label>
+            <textarea id="htmlSnippetInput" rows="5" class="w-full bg-slate-950 border border-slate-800 rounded-2xl p-3.5 text-xs font-mono text-slate-200 placeholder-slate-500 focus:border-indigo-500 outline-none" placeholder="Paste HTML here... e.g. <img src='hero.jpg'> or <button></button>"></textarea>
+
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="runHtmlQuickScan(this)" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs py-2.5 px-4 rounded-xl flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-600/20 transition">
+                <i data-lucide="zap" class="w-4 h-4"></i> Quick Scan HTML
+              </button>
+              <button type="button" onclick="clearHtmlScan()" class="bg-slate-900 hover:bg-slate-800 text-slate-300 text-xs font-semibold py-2.5 px-3.5 rounded-xl border border-slate-800 transition">
+                Clear
+              </button>
+            </div>
+
+            <div id="scanResultsContainer" class="space-y-2.5 pt-1" aria-live="polite"></div>
+          </div>
+
+          <hr class="border-slate-800/80" />
+
+          <!-- Part 2: Live Color Contrast Checker -->
+          <div class="space-y-3">
+            <div>
+              <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                <i data-lucide="palette" class="w-4 h-4 text-indigo-400"></i>
+                Live WCAG Contrast Ratio Tester
+              </h3>
+              <p class="text-xs text-slate-400">Verify foreground text against background colors in real time.</p>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                <label for="fgColorPicker" class="block text-[11px] text-slate-400 font-semibold mb-1.5">Foreground (Text)</label>
+                <div class="flex items-center gap-2">
+                  <input type="color" id="fgColorPicker" value="#f8fafc" oninput="updateContrastChecker()" class="w-8 h-8 rounded cursor-pointer bg-transparent border-0" />
+                  <input type="text" id="fgColorHex" value="#F8FAFC" oninput="syncHexInput('fg')" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-xs font-mono text-white uppercase" />
+                </div>
+              </div>
+              <div class="bg-slate-950 p-3 rounded-xl border border-slate-800">
+                <label for="bgColorPicker" class="block text-[11px] text-slate-400 font-semibold mb-1.5">Background</label>
+                <div class="flex items-center gap-2">
+                  <input type="color" id="bgColorPicker" value="#0f172a" oninput="updateContrastChecker()" class="w-8 h-8 rounded cursor-pointer bg-transparent border-0" />
+                  <input type="text" id="bgColorHex" value="#0F172A" oninput="syncHexInput('bg')" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1 text-xs font-mono text-white uppercase" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Live Preview Swatch -->
+            <div id="contrastPreviewBox" class="rounded-2xl p-4 border border-slate-800 transition-colors flex items-center justify-between" style="background-color: #0f172a; color: #f8fafc;">
+              <div>
+                <p class="text-sm font-bold">Accessible Typography Preview</p>
+                <p class="text-xs opacity-85">The quick brown fox jumps over the lazy dog.</p>
+              </div>
+              <div class="text-right">
+                <span id="contrastRatioText" class="text-xl font-black font-mono">17.4:1</span>
+                <span id="contrastPassBadge" class="block text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 mt-1">
+                  AAA Pass
+                </span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </aside>
     </div>
-    <div class="rv card">
-      <ul id="bars" class="g g2" style="list-style:none;padding:0;margin:0" aria-label="Category progress"></ul>
-      <div class="row mt2"><button id="export" class="btn btn-p">Export report</button><button id="badgeBtn" class="btn">Copy README badge</button><button id="demo" class="btn">Check all (demo)</button><button id="reset" class="btn">Reset</button></div>
+
+  </main>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" role="status" aria-live="polite" class="fixed bottom-5 right-5 z-50 pointer-events-none opacity-0 translate-y-4 transition-all duration-300 glass px-4 py-3 rounded-2xl border border-indigo-500/40 shadow-2xl flex items-center gap-2.5 text-xs font-semibold text-white">
+    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
+    <span id="toastMessage">Audit report copied to clipboard!</span>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="max-w-7xl mx-auto px-4 sm:px-6 py-10 border-t border-slate-800/80 mt-16 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+    <div class="flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+      <span>A11yPulse — Built for WCAG 2.2 Compliance & Inclusive Web Engineering</span>
     </div>
-  </div>
-  <div class="rv row bt mt3">
-    <div id="modes" role="group" aria-label="View" class="row"><button class="chip" data-m="list" aria-pressed="true">Checklist</button><button class="chip" data-m="fix" aria-pressed="false">Suggested fixes</button></div>
-    <div style="width:min(16rem,100%)"><label for="search" class="sr">Search rules</label><input id="search" type="search" placeholder="Search rules" class="in"></div>
-  </div>
-  <div id="filters" role="group" aria-label="Filter checklist" class="rv row mt1"></div>
-  <ul id="list" class="g mt2" style="list-style:none;padding:0;margin-bottom:0"></ul>
-  <div id="fixes" class="g mt2" hidden></div>
-</section>
-
-<section id="p-tools" class="page" hidden aria-labelledby="h-tools">
-  <h1 id="h-tools" class="rv" style="font-size:2rem">Tools</h1>
-  <div class="rv card mt2">
-    <h2>HTML snippet scanner</h2><p class="mu sm mt1">Finds missing alt text, unlabeled fields, empty buttons and links, skipped headings and positive tabindex.</p>
-    <label for="snip" class="sm mt2" style="display:block;font-weight:500">HTML to scan</label>
-    <textarea id="snip" rows="6" spellcheck="false" class="in" style="font:.85rem 'JetBrains Mono',monospace"></textarea>
-    <div class="row mt1"><button id="scan" class="btn btn-p">Quick scan</button><button id="sample" class="btn">Load sample</button></div>
-    <div id="scanOut" class="g mt2" aria-live="polite"></div>
-  </div>
-  <div class="rv card mt2 g g2">
-    <div><h2>Contrast checker</h2>
-      <label class="row mt2 sm">Text <input id="fg" type="color" value="#8a96a3" style="width:3.4rem;height:2.2rem"></label>
-      <label class="row mt1 sm">Background <input id="bg" type="color" value="#ffffff" style="width:3.4rem;height:2.2rem"></label></div>
-    <div><div id="cPrev" style="border-radius:.8rem;padding:1rem;font-weight:600;font-size:1.1rem">The quick brown fox jumps over the lazy dog.</div>
-      <p class="sm mt1">Ratio <strong id="cRatio" style="font-family:'JetBrains Mono',monospace"></strong></p><div id="cBadges" class="row mt1"></div>
-      <button id="autoFix" class="btn mt1 xs">Auto-fix text color to 4.5:1</button></div>
-  </div>
-</section>
-
-<section id="p-crew" class="page" hidden aria-labelledby="h-crew">
-  <h1 id="h-crew" class="rv" style="font-size:2rem">Crew roster</h1>
-  <p class="rv mu mt1">Type or speak a command such as “call Naomi Park”. The matching person is called first.</p>
-  <div class="rv card mt2">
-    <div class="row"><label for="voice" class="sr">Command</label><input id="voice" class="in" style="flex:1;min-width:10rem" placeholder="call Naomi Park"><button id="mic" class="btn">Speak</button><button id="run" class="btn btn-p">Run</button></div>
-    <p id="vfb" class="sm mt1" style="min-height:1.5rem;color:var(--ac);font-family:'JetBrains Mono',monospace" role="status" aria-live="polite"></p>
-  </div>
-  <ul id="crewGrid" class="grid4 mt2" style="list-style:none;padding:0"></ul>
-  <form id="addForm" class="card mt2 g g2" hidden aria-label="Add crew member (admin only)">
-    <div><label for="nName" class="sm">Name</label><input id="nName" class="in" required></div>
-    <div><label for="nRole" class="sm">Role</label><input id="nRole" class="in" required></div>
-    <div style="align-self:end"><button class="btn btn-p">Add member</button></div>
-  </form>
-</section>
-
-<section id="p-learn" class="page" hidden aria-labelledby="h-learn">
-  <h1 id="h-learn" class="rv" style="font-size:2rem">Learn the four principles</h1>
-  <div id="pour" class="grid4 mt2"></div>
-  <div class="rv card mt2"><h2>Keyboard testing cheat sheet</h2>
-    <p class="sm mt1"><b style="color:var(--ac)">Tab / Shift+Tab</b> <span class="mu">move focus</span> · <b style="color:var(--ac)">Enter / Space</b> <span class="mu">activate</span> · <b style="color:var(--ac)">Esc</b> <span class="mu">close dialogs</span> · <b style="color:var(--ac)">Arrows</b> <span class="mu">move in menus</span></p>
-    <p class="mu sm mt1">Full reference: <a href="https://www.w3.org/WAI/WCAG22/quickref/" target="_blank" rel="noopener" style="color:var(--in);text-decoration:underline">WCAG 2.2 Quick Reference</a>.</p></div>
-</section>
-
-<section id="p-login" class="page" hidden aria-labelledby="h-login">
-  <div class="card login-box">
-    <div class="login-art" aria-hidden="true"><svg viewBox="0 0 200 200" width="240" height="240"><g fill="none" stroke="#34d399" stroke-width="2"><circle class="pr" cx="100" cy="100" r="30"/><circle class="pr" cx="100" cy="100" r="30"/><circle class="pr" cx="100" cy="100" r="30"/></g><circle cx="100" cy="100" r="9" fill="#34d399"/></svg></div>
-    <div style="padding:2rem">
-      <h1 id="h-login" class="lg" style="font-size:1.7rem">Sign in</h1><p class="lg mu sm mt1">Admins can manage the crew roster.</p>
-      <form id="loginForm" class="g mt2" novalidate>
-        <div class="lg"><label for="lRole" class="sm">Role</label><select id="lRole" class="in"><option value="student">Student auditor</option><option value="admin">Administrator</option></select></div>
-        <div class="lg"><label for="lKey" class="sm">University ID or admin key</label><input id="lKey" class="in" autocomplete="off" aria-describedby="lErr"><p id="lErr" role="alert" class="sm" style="min-height:1.3rem;color:var(--rd)"></p></div>
-        <button id="lBtn" class="lg btn btn-p">Verify and enter</button>
-      </form>
-      <p class="mu xs mt2">Demo only: this check runs in your browser and is not real security. Students: any ID of 4+ characters. Admin demo key: <code>pulse-admin</code>.</p>
+    <div>
+      <span>100% Keyboard Navigable · Zero Build Dependencies · Persistent Local Storage</span>
     </div>
-  </div>
-</section>
-</main>
-<footer class="wrap mu sm" style="text-align:center;padding:1rem 1rem 2.5rem">A11yPulse covers a subset of WCAG 2.2. Pair it with real assistive-technology testing.</footer>
-<div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </footer>
 
-<script>
-const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
-const RM=matchMedia('(prefers-reduced-motion: reduce)'),can=()=>!!window.anime&&!RM.matches;
-const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const load=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}};
-const store=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
-const CHEV='<svg class="chev" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></svg>';
-const CATS=['Perceivable','Operable','Understandable','Robust'];
-const W={A:3,AA:2,AAA:1},LN={A:'Critical',AA:'Important',AAA:'Enhanced'};
-const ITEMS=[
-['alt','Perceivable','A','Images have text alternatives','Meaningful images have descriptive alt text; decorative ones use alt="".','Screen reader users hear nothing, or a file name, without alt text.','<img src="chart.png">','<img src="chart.png" alt="Sales rose 40% in Q3">\n<img src="swirl.svg" alt="">'],
-['cap','Perceivable','A','Video and audio have captions','Prerecorded media includes captions and a transcript.','Deaf and hard-of-hearing users cannot follow spoken content otherwise.','<video src="intro.mp4" controls></video>','<video src="intro.mp4" controls>\n  <track kind="captions" src="intro.vtt" srclang="en" label="English">\n</video>'],
-['col','Perceivable','A','Color is not the only signal','Errors, links and states also use text, icons or underlines.','Color-blind users cannot tell red from green status cues.','<span style="color:red">Invalid</span>','<span class="err">⚠ Error: invalid email</span>'],
-['con','Perceivable','AA','Text contrast is at least 4.5:1','Normal text meets 4.5:1; large text meets 3:1.','Low-vision users and anyone in sunlight struggle with faint text.','p { color:#aaa; background:#fff; } /* 2.3:1 */','p { color:#595959; background:#fff; } /* 7:1 */'],
-['ref','Perceivable','AA','Content reflows at 400% zoom','No horizontal scrolling at 320px width.','Low-vision users zoom heavily and need one readable column.','.page { width:1200px; }','.page { max-width:1200px; width:100%; }'],
-['key','Operable','A','Everything works with a keyboard','Links, buttons and widgets work with Tab, Enter and Space.','Keyboard-only and switch users cannot use a mouse.','<div onclick="save()">Save</div>','<button type="button" onclick="save()">Save</button>'],
-['trap','Operable','A','No keyboard traps','Focus can always leave a component; modals close with Escape.','A trap locks keyboard users inside a widget.','modal.onkeydown = e => e.preventDefault();','modal.addEventListener("keydown", e => {\n  if (e.key === "Escape") closeModal();\n});'],
-['skip','Operable','A','Skip link bypasses repeated blocks','A "Skip to main content" link is the first focusable element.','Keyboard users otherwise tab through the whole menu on every page.','<nav>…50 links…</nav>\n<main>…</main>','<a href="#main" class="skip">Skip to main content</a>\n<nav>…</nav>\n<main id="main">…</main>'],
-['foc','Operable','AA','Focus is clearly visible','Focused elements show an outline with at least 3:1 contrast.','Keyboard users lose their place without a focus ring.','*:focus { outline:none; }',':focus-visible { outline:3px solid #4f46e5; outline-offset:2px; }'],
-['tgt','Operable','AA','Targets are at least 24×24 CSS px','Buttons and links are large enough or spaced apart (WCAG 2.2).','People with tremors hit the wrong control on tiny targets.','.icon-btn { width:14px; height:14px; }','.icon-btn { min-width:44px; min-height:44px; }'],
-['lab','Understandable','A','Form fields have labels','Each input has a visible, linked label.','Screen readers announce "edit text" with no clue what to type.','<input type="email" placeholder="Email">','<label for="email">Email</label>\n<input id="email" type="email" autocomplete="email">'],
-['err','Understandable','A','Errors are clear and announced','Messages say what went wrong and how to fix it.','Users with cognitive disabilities need specific recovery guidance.','<input class="red-border"><span>Error</span>','<input id="e" aria-invalid="true" aria-describedby="e-msg">\n<p id="e-msg" role="alert">Enter an email like name@site.com</p>'],
-['lng','Understandable','A','Page language is declared','The html element has a valid lang attribute.','Screen readers pick the wrong voice without it.','<html>','<html lang="en">'],
-['sem','Robust','A','Semantic HTML structure','Use real headings, lists, buttons and tables, not styled divs.','Assistive tech relies on native roles to announce content.','<div class="title">News</div>\n<div class="btn">Go</div>','<h2>News</h2>\n<button type="button">Go</button>'],
-['lmk','Robust','A','ARIA landmarks are used','Use header, nav, main and footer; label repeated navs.','Screen reader users jump between regions.','<div id="menu">…</div><div id="content">…</div>','<nav aria-label="Primary">…</nav>\n<main id="content">…</main>'],
-['dom','Robust','A','Valid DOM with unique IDs','No duplicate IDs; elements are properly nested.','Duplicate IDs break label and aria-describedby links.','<input id="n"> <input id="n">','<input id="first"> <input id="last">'],
-['sta','Robust','AA','Status messages use live regions','Toasts and updates are announced without moving focus.','Screen reader users otherwise never learn an action succeeded.','<div class="toast">Saved</div>','<div role="status" aria-live="polite">Saved</div>'],
-['enh','Perceivable','AAA','Enhanced contrast of 7:1','Body text reaches 7:1 contrast.','Users with moderately low vision read without magnifiers.','body { color:#767676; } /* 4.5:1 */','body { color:#3d3d3d; } /* 10:1 */']
-].map(a=>({id:a[0],cat:a[1],lvl:a[2],t:a[3],d:a[4],why:a[5],bad:a[6],good:a[7]}));
-const TOTAL=ITEMS.reduce((s,i)=>s+W[i.lvl],0);
-let checked=new Set(load('a11ypulse:v3',[])),filter='All',query='',mode='list',shown=0,cur=null;
-const saveC=()=>store('a11ypulse:v3',[...checked]);
-const wsum=l=>l.reduce((s,i)=>s+W[i.lvl],0);
-function stats(){const done=wsum(ITEMS.filter(i=>checked.has(i.id)));return{done,pct:Math.round(done/TOTAL*100),per:CATS.map(c=>{const a=ITEMS.filter(i=>i.cat===c),d=a.filter(i=>checked.has(i.id));return{c,pct:Math.round(wsum(d)/wsum(a)*100),n:d.length,len:a.length}})}}
-const grade=p=>p===100?{c:'#a5b4fc',l:'Perfect - Fully Accessible'}:p>=80?{c:'#34d399',l:'Good - WCAG AA Ready'}:p>=50?{c:'#fbbf24',l:'Needs Work - Partially Compliant'}:{c:'#f87171',l:'Critical Issues - Non-Compliant'};
+  <script>
+    // =========================================================================
+    // 1. PRE-POPULATED WCAG 2.2 CHECKLIST DATASET (12 REAL-WORLD ITEMS)
+    // =========================================================================
+    const wcagItems = [
+      // PERCEIVABLE (3 Items)
+      {
+        id: "p1",
+        category: "Perceivable",
+        sc: "1.1.1",
+        title: "Non-Text Content (Meaningful Alt Text)",
+        description: "All informative <img>, <svg>, and icon elements provide descriptive alternative text; purely decorative graphics use alt=\"\".",
+        level: "A",
+        weight: 3,
+        whyItMatters: "Blind and low-vision users relying on screen readers hear the raw filename or nothing at all when informative images lack alt attributes.",
+        badCode: `<img src="chart-q4-growth.png">\n<button><svg class="icon-trash"></svg></button>`,
+        goodCode: `<img src="chart-q4-growth.png" alt="Q4 revenue grew 34% to $2.4M">\n<button aria-label="Delete item"><svg aria-hidden="true" class="icon-trash"></svg></button>`
+      },
+      {
+        id: "p2",
+        category: "Perceivable",
+        sc: "1.4.3",
+        title: "Contrast (Minimum 4.5:1 Text Ratio)",
+        description: "Normal-sized body text maintains at least a 4.5:1 contrast ratio against its background (3:1 for large 18pt+ text and UI icons).",
+        level: "AA",
+        weight: 2,
+        whyItMatters: "Users with low vision, color blindness, or screens in bright sunlight cannot read low-contrast gray-on-gray text.",
+        badCode: `.muted-copy {\n  color: #64748b; /* 2.8:1 fail on dark slate */\n  background: #1e293b;\n}`,
+        goodCode: `.accessible-copy {\n  color: #cbd5e1; /* 9.4:1 AAA pass on dark slate */\n  background: #0f172a;\n}`
+      },
+      {
+        id: "p3",
+        category: "Perceivable",
+        sc: "1.2.2",
+        title: "Captions & Transcripts for Media",
+        description: "Synchronized closed captions (<track kind=\"captions\">) are provided for all pre-recorded video and audio content.",
+        level: "A",
+        weight: 3,
+        whyItMatters: "Deaf and hard-of-hearing users are completely excluded from video tutorials, product demos, and spoken audio without synchronized captions.",
+        badCode: `<video src="product-keynote.mp4" controls></video>`,
+        goodCode: `<video src="product-keynote.mp4" controls>\n  <track kind="captions" src="keynote-en.vtt" srclang="en" label="English" default>\n</video>`
+      },
 
-function countTo(el,to,from=0,suf=''){if(!can()){el.textContent=to+suf;return}const o={v:from};anime({targets:o,v:to,round:1,duration:1000,easing:'easeOutExpo',update:()=>el.textContent=o.v+suf})}
-function updateScore(){
-  const s=stats(),g=grade(s.pct),ring=$('#ring'),off=326.73*(1-s.pct/100);
-  ring.setAttribute('stroke',g.c);$('#status').textContent=g.l;$('#status').style.color=g.c;
-  $('#pts').textContent=`${s.done} of ${TOTAL} weighted points`;$('#srScore').textContent=`Score ${s.pct} percent. ${g.l}.`;
-  if(can()){anime.remove(ring);anime({targets:ring,strokeDashoffset:off,duration:900,easing:'easeOutExpo'});countTo($('#pct'),s.pct,shown,'%')}else{ring.style.strokeDashoffset=off;$('#pct').textContent=s.pct+'%'}
-  shown=s.pct;
-  s.per.forEach(p=>{const f=$(`[data-bf="${p.c}"]`);f.style.background=grade(p.pct).c;f.parentNode.setAttribute('aria-valuenow',p.pct);$(`[data-bp="${p.c}"]`).textContent=`${p.n}/${p.len} · ${p.pct}%`;can()?anime({targets:f,width:p.pct+'%',duration:700,easing:'easeOutCubic'}):f.style.width=p.pct+'%'});
-  $('#fixCount').textContent=ITEMS.length-checked.size;$('#sScore').textContent=s.pct+'%';
-}
-function buildBars(){$('#bars').innerHTML=CATS.map(c=>`<li><div class="row bt xs" style="margin-bottom:.3rem"><span>${c}</span><span data-bp="${c}" class="mu" style="font-family:'JetBrains Mono',monospace"></span></div><div class="bar" role="progressbar" aria-label="${c}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div data-bf="${c}"></div></div></li>`).join('')}
-function buildFilters(){$('#filters').innerHTML=['All',...CATS,'Incomplete only'].map(o=>`<button class="chip" data-f="${o}" aria-pressed="${o===filter}">${o}</button>`).join('')}
-function renderList(anim){
-  const q=query.trim().toLowerCase(),its=ITEMS.filter(i=>(filter==='All'||(filter==='Incomplete only'?!checked.has(i.id):i.cat===filter))&&(!q||(i.t+i.d).toLowerCase().includes(q)));
-  $('#list').innerHTML=its.length?its.map(i=>`<li class="cd"><label class="item card"><input type="checkbox" class="sr" data-id="${i.id}" ${checked.has(i.id)?'checked':''}><span class="box" aria-hidden="true"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span><span style="min-width:0;flex:1"><span class="row"><span class="ttl fd" style="font-weight:700">${esc(i.t)}</span><span class="lv lv${i.lvl}">Level ${i.lvl} · ${LN[i.lvl]} · ${W[i.lvl]} pt${W[i.lvl]>1?'s':''}</span></span><span class="mu sm" style="display:block">${esc(i.d)}</span><span class="mu xs">${i.cat}</span></span></label></li>`).join(''):'<li class="card mu" style="text-align:center">No matching items.</li>';
-  if(anim&&can())anime({targets:'#list .cd',opacity:[0,1],translateY:[16,0],delay:anime.stagger(45),duration:450,easing:'easeOutCubic'});
-}
-const openFix=new Set();
-function renderFixes(){
-  const o=ITEMS.filter(i=>!checked.has(i.id)).sort((a,b)=>W[b.lvl]-W[a.lvl]);
-  $('#fixes').innerHTML=o.length?o.map(i=>`<details data-d="${i.id}" class="card" style="padding:0" ${openFix.has(i.id)?'open':''}><summary>${CHEV}<span class="fd" style="flex:1;font-weight:700">${esc(i.t)}</span><span class="lv lv${i.lvl}">Level ${i.lvl}</span></summary><div class="g" style="padding:0 1rem 1rem"><p class="sm"><b>Why it matters:</b> <span class="mu">${esc(i.why)}</span></p><div class="g g2"><div class="bad"><p class="xs" style="color:var(--rd);font-weight:600">❌ Bad</p><pre>${esc(i.bad)}</pre></div><div class="ok"><p class="xs" style="color:var(--ac);font-weight:600">✅ Accessible fix</p><pre>${esc(i.good)}</pre></div></div></div></details>`).join(''):'<div class="card" style="text-align:center"><p class="fd" style="font-size:1.3rem;font-weight:700;color:var(--ac)">All requirements met</p></div>';
-}
-function setMode(m){mode=m;$$('#modes .chip').forEach(b=>b.setAttribute('aria-pressed',b.dataset.m===m));$('#list').hidden=$('#filters').hidden=m!=='list';$('#fixes').hidden=m!=='fix';m==='list'?renderList(true):renderFixes()}
-function toast(m){const t=$('#toast');t.textContent=m;if(can()){anime.remove(t);anime({targets:t,opacity:[0,1,1,0],translateY:[12,0,0,-6],duration:2400,easing:'easeOutQuad'})}else{t.style.opacity=1;setTimeout(()=>t.style.opacity=0,2200)}}
-const bounce=el=>{if(can()&&el)anime({targets:el,scale:[1,.8,1.15,1],duration:450,easing:'easeOutElastic(1,.6)'})};
+      // OPERABLE (3 Items)
+      {
+        id: "o1",
+        category: "Operable",
+        sc: "2.1.1",
+        title: "Full Keyboard Navigation & Operability",
+        description: "Every interactive element (buttons, menus, modals, custom cards) can be reached and triggered using only Tab, Shift+Tab, Enter, and Space.",
+        level: "A",
+        weight: 3,
+        whyItMatters: "Users with motor disabilities or tremors who cannot use a mouse rely exclusively on keyboard navigation to interact with the page.",
+        badCode: `<div class="btn" onclick="submitOrder()">Checkout Now</div>`,
+        goodCode: `<button type="button" class="btn" onclick="submitOrder()">Checkout Now</button>`
+      },
+      {
+        id: "o2",
+        category: "Operable",
+        sc: "2.4.7",
+        title: "Visible Focus States & Indicators",
+        description: "Interactive elements display a high-contrast, unmistakable focus ring when navigated via keyboard; outline: none is never used without a replacement.",
+        level: "AA",
+        weight: 2,
+        whyItMatters: "Stripping focus outlines forces keyboard users to guess where their cursor is located on the screen.",
+        badCode: `button:focus {\n  outline: none; /* Invisible focus trap! */\n}`,
+        goodCode: `button:focus-visible {\n  outline: 2px solid #818cf8;\n  outline-offset: 2px;\n}`
+      },
+      {
+        id: "o3",
+        category: "Operable",
+        sc: "2.1.2",
+        title: "No Keyboard Traps & Modal Escape",
+        description: "Users can move focus into and out of all dialogs, widgets, and drawers using standard keyboard keys (including Escape to close modals).",
+        level: "A",
+        weight: 3,
+        whyItMatters: "A keyboard trap locks a user inside a popup or widget, forcing them to reload the entire browser tab to continue.",
+        badCode: `<div class="modal-open" onkeydown="event.preventDefault()">\n  <input type="text">\n</div>`,
+        goodCode: `<dialog id="settingsModal" aria-modal="true" onkeydown="if(event.key==='Escape') this.close()">\n  <button type="button" onclick="this.closest('dialog').close()">Close (Esc)</button>\n</dialog>`
+      },
 
-$('#list').addEventListener('change',e=>{const id=e.target.dataset.id;if(!id)return;e.target.checked?checked.add(id):checked.delete(id);saveC();bounce(e.target.nextElementSibling);updateScore()});
-$('#filters').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(!b)return;filter=b.dataset.f;buildFilters();renderList(true);$('#filters [aria-pressed=true]').focus()});
-$('#modes').addEventListener('click',e=>{const b=e.target.closest('[data-m]');b&&setMode(b.dataset.m)});
-$('#fixes').addEventListener('toggle',e=>{const d=e.target;if(d.dataset&&d.dataset.d)d.open?openFix.add(d.dataset.d):openFix.delete(d.dataset.d)},true);
-$('#search').addEventListener('input',e=>{query=e.target.value;mode!=='list'?setMode('list'):renderList(false)});
-const refresh=()=>{updateScore();mode==='list'?renderList(false):renderFixes()};
-$('#reset').onclick=()=>{if(!confirm('Reset all progress?'))return;checked.clear();saveC();refresh();toast('Progress reset')};
-$('#demo').onclick=()=>{ITEMS.forEach(i=>checked.add(i.id));saveC();refresh();toast('All items checked for demo')};
-async function copy(t,m){try{await navigator.clipboard.writeText(t);toast(m)}catch(e){const a=document.createElement('textarea');a.value=t;document.body.appendChild(a);a.select();try{document.execCommand('copy');toast(m)}catch(_){toast('Copy failed')}a.remove()}}
-$('#export').onclick=()=>{const s=stats();let md=`# A11yPulse Audit Report\n\n**Date:** ${new Date().toLocaleDateString()}\n**Score:** ${s.pct}% (${grade(s.pct).l})\n\n`;CATS.forEach(c=>{md+=`## ${c}\n`+ITEMS.filter(i=>i.cat===c).map(i=>`- [${checked.has(i.id)?'x':' '}] ${i.t} (Level ${i.lvl})`).join('\n')+'\n\n'});const o=ITEMS.filter(i=>!checked.has(i.id)).sort((a,b)=>W[b.lvl]-W[a.lvl]);md+=`## Action required (${o.length})\n`+(o.length?o.map(i=>`- **Level ${i.lvl}:** ${i.t} — ${i.why}`).join('\n'):'None.');bounce($('#export'));copy(md,'Report copied to clipboard')};
-$('#badgeBtn').onclick=()=>copy(`![A11yPulse](https://img.shields.io/badge/A11yPulse-${stats().pct}%25-34d399)`,'Badge markdown copied');
+      // UNDERSTANDABLE (3 Items)
+      {
+        id: "u1",
+        category: "Understandable",
+        sc: "3.3.2",
+        title: "Explicit Form Labels & Instructions",
+        description: "Every <input>, <select>, and <textarea> is programmaticly linked to a persistent <label for=\"...\"> element rather than relying on placeholder text alone.",
+        level: "A",
+        weight: 3,
+        whyItMatters: "Placeholders disappear the moment a user types, straining short-term memory and breaking screen reader form announcements.",
+        badCode: `<input type="email" placeholder="Enter your work email">`,
+        goodCode: `<label for="workEmail" class="form-label">Work Email Address</label>\n<input id="workEmail" type="email" autocomplete="email" required>`
+      },
+      {
+        id: "u2",
+        category: "Understandable",
+        sc: "3.3.1",
+        title: "Clear Error Identification & Suggestions",
+        description: "Validation errors are announced in text via aria-live or aria-describedby, explaining what went wrong and how to fix it (not just a red border).",
+        level: "AA",
+        weight: 2,
+        whyItMatters: "Colorblind users cannot perceive a red input border alone, and screen reader users need programmatic text feedback when form submission fails.",
+        badCode: `<input type="password" class="border-red-500">`,
+        goodCode: `<input id="pwd" type="password" aria-invalid="true" aria-describedby="pwdErr">\n<p id="pwdErr" role="alert" class="text-rose-400">Password must include at least 8 characters and a symbol.</p>`
+      },
+      {
+        id: "u3",
+        category: "Understandable",
+        sc: "3.1.1",
+        title: "Document Language Attribute (<html lang>)",
+        description: "The root <html> element declares a valid BCP-47 primary human language tag (e.g., lang=\"en\") so assistive speech synthesizers use the right pronunciation rules.",
+        level: "A",
+        weight: 3,
+        whyItMatters: "Without a valid lang attribute, a French or Spanish screen reader will attempt to pronounce English words with foreign phonetics.",
+        badCode: `<!DOCTYPE html>\n<html>\n  <head><title>Dashboard</title></head>`,
+        goodCode: `<!DOCTYPE html>\n<html lang="en">\n  <head><title>Dashboard</title></head>`
+      },
 
-const SAMPLE='<h1>Shop</h1>\n<h3>Deals</h3>\n<img src="team.jpg">\n<button></button>\n<a href="/pricing"></a>\n<input type="email" placeholder="Email">\n<div tabindex="3">Menu</div>';
-$('#snip').value=SAMPLE;$('#sample').onclick=()=>{$('#snip').value=SAMPLE;$('#snip').focus()};
-$('#scan').onclick=()=>{
-  bounce($('#scan'));const html=$('#snip').value,d=new DOMParser().parseFromString(html,'text/html'),out=[],add=(t,l,f,x)=>out.push({t,l,f,x});
-  d.querySelectorAll('img:not([alt])').forEach(el=>{const c=el.cloneNode();c.setAttribute('alt','Describe the image');add('Image is missing alt text','A',el.outerHTML,c.outerHTML)});
-  d.querySelectorAll('input:not([type=hidden]):not([type=submit]):not([type=button]),select,textarea').forEach(el=>{if(el.getAttribute('aria-label')||el.getAttribute('aria-labelledby')||(el.id&&d.querySelector(`label[for="${CSS.escape(el.id)}"]`))||el.closest('label'))return;const c=el.cloneNode(),id=el.id||'field-id';c.id=id;add('Form field has no label','A',el.outerHTML,`<label for="${id}">Field label</label>\n${c.outerHTML}`)});
-  const named=el=>el.textContent.trim()||el.getAttribute('aria-label')||el.getAttribute('aria-labelledby')||el.title||[...el.querySelectorAll('img[alt]')].some(i=>i.alt.trim());
-  d.querySelectorAll('button,[role=button]').forEach(el=>{if(named(el))return;const c=el.cloneNode(true);c.setAttribute('aria-label','Describe the action');add('Button has no accessible name','A',el.outerHTML,c.outerHTML)});
-  d.querySelectorAll('a[href]').forEach(el=>{if(named(el))return;const c=el.cloneNode(true);c.setAttribute('aria-label','Describe the destination');add('Link has no accessible name','A',el.outerHTML,c.outerHTML)});
-  d.querySelectorAll('[tabindex]').forEach(el=>{if(+el.getAttribute('tabindex')>0){const c=el.cloneNode(true);c.setAttribute('tabindex','0');add('Positive tabindex breaks tab order','A',el.outerHTML,c.outerHTML)}});
-  let last=0;d.querySelectorAll('h1,h2,h3,h4,h5,h6').forEach(h=>{const n=+h.tagName[1];if(last&&n>last+1){const k=last+1;add(`Heading skips from h${last} to h${n}`,'A',h.outerHTML,`<h${k}>${h.innerHTML}</h${k}>`)}last=n});
-  if(/<html/i.test(html)&&!d.documentElement.getAttribute('lang'))add('Page language is not declared','A','<html>','<html lang="en">');
-  $('#scanOut').innerHTML=!html.trim()?'<p class="sm" style="color:var(--am)">Paste some HTML first.</p>':!out.length?'<p class="ok sm" style="color:var(--ac)">No issues found. Test with a screen reader to be sure.</p>':`<p class="sm" style="color:var(--am);font-weight:600">${out.length} issue${out.length>1?'s':''} found</p>`+out.map(o=>`<div class="card" style="padding:.8rem"><p class="sm" style="font-weight:600;margin-bottom:.5rem">${esc(o.t)} <span class="lv lv${o.l}">Level ${o.l}</span></p><div class="g g2"><div class="bad"><p class="xs" style="color:var(--rd);font-weight:600">❌ Found</p><pre>${esc(o.f)}</pre></div><div class="ok"><p class="xs" style="color:var(--ac);font-weight:600">✅ Fix</p><pre>${esc(o.x)}</pre></div></div></div>`).join('');
-  if(out.length&&can())anime({targets:'#scanOut > *',opacity:[0,1],translateY:[10,0],delay:anime.stagger(60),duration:400,easing:'easeOutCubic'});
-};
+      // ROBUST (3 Items)
+      {
+        id: "r1",
+        category: "Robust",
+        sc: "4.1.2",
+        title: "Semantic HTML Landmarks & Headings",
+        description: "Pages use native landmark elements (<header>, <nav>, <main>, <aside>, <footer>) and a logical h1–h6 hierarchy instead of generic <div> soup.",
+        level: "A",
+        weight: 3,
+        whyItMatters: "Screen reader users navigate pages by jumping directly between <main>, <nav>, and headings; all-div layouts strip away this structural map.",
+        badCode: `<div class="header">\n  <div class="big-title">Account Settings</div>\n</div>`,
+        goodCode: `<header>\n  <h1>Account Settings</h1>\n</header>\n<main id="main-content">...</main>`
+      },
+      {
+        id: "r2",
+        category: "Robust",
+        sc: "4.1.3",
+        title: "ARIA Status Messages & Dynamic Alerts",
+        description: "Dynamic toast notifications, search results counters, and async updates use role=\"status\" or aria-live=\"polite\" so changes are announced without stealing focus.",
+        level: "AA",
+        weight: 2,
+        whyItMatters: "Sighted users immediately spot toast notifications or cart badge updates, whereas screen reader users remain unaware unless aria-live is present.",
+        badCode: `<div class="toast">Settings saved successfully!</div>`,
+        goodCode: `<div role="status" aria-live="polite" class="toast">\n  Settings saved successfully!\n</div>`
+      },
+      {
+        id: "r3",
+        category: "Robust",
+        sc: "2.5.8",
+        title: "Enhanced Touch Target Size & Spacing",
+        description: "Interactive controls and links provide an ample target area (at least 44×44 CSS pixels for AAA or 24×24px minimum for AA) to prevent accidental taps.",
+        level: "AAA",
+        weight: 1,
+        whyItMatters: "Users with fine-motor impairments or mobile users navigating one-handed struggle to tap tightly packed 12px icon buttons.",
+        badCode: `<button class="w-4 h-4 p-0 text-[10px]">×</button>`,
+        goodCode: `<button type="button" aria-label="Close modal" class="min-w-[44px] min-h-[44px] p-2.5 flex items-center justify-center">×</button>`
+      }
+    ];
 
-const lum=h=>{const v=[1,3,5].map(i=>parseInt(h.substr(i,2),16)/255).map(c=>c<=.03928?c/12.92:Math.pow((c+.055)/1.055,2.4));return .2126*v[0]+.7152*v[1]+.0722*v[2]};
-const ratio=(a,b)=>{const x=lum(a),y=lum(b);return(Math.max(x,y)+.05)/(Math.min(x,y)+.05)};
-function contrast(){const f=$('#fg').value,b=$('#bg').value,r=ratio(f,b);$('#cPrev').style.color=f;$('#cPrev').style.background=b;$('#cRatio').textContent=r.toFixed(2)+':1';$('#cBadges').innerHTML=[['AA normal',4.5],['AA large',3],['AAA normal',7],['AAA large',4.5]].map(([n,m])=>`<span class="lv ${r>=m?'lvAAA':'lvA'}">${r>=m?'Pass':'Fail'} · ${n}</span>`).join('')}
-$('#fg').oninput=$('#bg').oninput=contrast;
-$('#autoFix').onclick=()=>{const b=$('#bg').value,k=lum(b)>.4?0:255;let fg=$('#fg').value;for(let t=0;t<=1;t+=.02){fg='#'+[1,3,5].map(i=>Math.round(parseInt(b.substr(i,2),16)*(1-t)+k*t).toString(16).padStart(2,'0')).join('');if(ratio(fg,b)>=4.5)break}$('#fg').value=fg;contrast();toast('Text color adjusted to '+fg)};
+    // =========================================================================
+    // 2. STATE & PERSISTENCE (LOCALSTORAGE)
+    // =========================================================================
+    const STORAGE_KEY = "a11ypulse_checked_v1";
+    let checkedIds = new Set();
+    let activeFilter = "All";
+    let displayedScore = 0;
 
-let crew=load('a11ypulse:crew',[{n:'Mateus Aldana',r:'Creative Director'},{n:'Eli Ramirez',r:'Design Lead'},{n:'Naomi Park',r:'Brand Strategist'},{n:'Theo Vance',r:'Senior Engineer'},{n:'Kit Bellamy',r:'Art Direction'}]);
-const HUES=['#34d399','#818cf8','#fbbf24','#f9a8d4','#67e8f9','#fdba74'],ini=n=>n.split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
-function renderCrew(){
-  $('#strip').innerHTML=crew.map(m=>`<a href="#/crew" class="pill">${esc(m.n)}</a>`).join('');
-  $('#crewGrid').innerHTML=crew.map((m,i)=>`<li><button class="crew card" data-n="${esc(m.n)}" aria-label="Call ${esc(m.n)}, ${esc(m.r)}"><span class="av" style="background:${HUES[i%HUES.length]}">${esc(ini(m.n))}</span><span><span class="fd" style="display:block;font-weight:700">${esc(m.n)}</span><span class="mu sm">${esc(m.r)}</span></span></button></li>`).join('');
-}
-function callMember(n){
-  const el=$$('.crew').find(c=>c.dataset.n===n);if(!el)return;
-  $$('.crew').forEach(c=>c.classList.remove('on'));el.classList.add('on');bounce(el);setTimeout(()=>el.classList.remove('on'),3000);
-  if('speechSynthesis'in window&&!RM.matches){try{speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance('Calling '+n))}catch(e){}}
-}
-function runCommand(raw){
-  const t=raw.trim().toLowerCase(),fb=$('#vfb');if(!t){fb.textContent='Type or speak a command first.';return}
-  const m=crew.find(c=>t.includes(c.n.toLowerCase())||t.includes(c.n.split(' ')[0].toLowerCase()));
-  if(m){fb.textContent=`Calling ${m.n} (${m.r}) first.`;callMember(m.n)}else fb.textContent=`No crew member matched “${raw}”. Try a name from the roster.`;
-}
-$('#run').onclick=()=>{runCommand($('#voice').value);$('#voice').value=''};
-$('#voice').onkeydown=e=>{if(e.key==='Enter')$('#run').click()};
-$('#crewGrid').addEventListener('click',e=>{const b=e.target.closest('.crew');if(b){callMember(b.dataset.n);$('#vfb').textContent=`Calling ${b.dataset.n}.`}});
-const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-$('#mic').onclick=()=>{if(!SR){toast('Speech input is not supported here. Type instead.');return}const r=new SR();r.lang='en-US';r.onresult=e=>{const t=e.results[0][0].transcript;$('#voice').value=t;runCommand(t)};r.onerror=()=>toast('Could not hear you. Try again.');try{r.start();toast('Listening…')}catch(e){}};
-$('#addForm').onsubmit=e=>{e.preventDefault();crew.push({n:$('#nName').value.trim(),r:$('#nRole').value.trim()});store('a11ypulse:crew',crew);e.target.reset();renderCrew();toast('Member added')};
+    function loadSavedState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) {
+            checkedIds = new Set(parsed);
+          }
+        } else {
+          // Pre-check 3 items on first visit so user sees an active dashboard right away
+          checkedIds = new Set(["u3", "r1", "p2"]);
+          saveState();
+        }
+      } catch (e) {
+        checkedIds = new Set(["u3", "r1", "p2"]);
+      }
+    }
 
-const POUR=[['Perceivable','Users can see or hear the content.','Alt text, captions, contrast.'],['Operable','Users can navigate and use controls.','Keyboard access, focus, target size.'],['Understandable','Content and behavior are predictable.','Labels, clear errors, page language.'],['Robust','Content works with assistive tech.','Semantic HTML, landmarks, live regions.']];
-$('#pour').innerHTML=POUR.map(p=>`<div class="rv card"><h2>${p[0]}</h2><p class="mu sm mt1">${p[1]}</p><p class="sm mt1">${p[2]}</p></div>`).join('');
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify([...checkedIds]));
+      } catch (e) {}
+    }
 
-let role=load('a11ypulse:role',null);
-function authUI(){$('#loginLink').hidden=!!role;$('#authBox').hidden=!role;$('#roleBadge').textContent=role?role.toUpperCase():'';$('#addForm').hidden=role!=='admin'}
-$('#loginForm').onsubmit=e=>{
-  e.preventDefault();const r=$('#lRole').value,k=$('#lKey').value.trim(),err=$('#lErr'),ok=r==='admin'?k==='pulse-admin':k.length>=4;
-  if(!ok){err.textContent=r==='admin'?'Admin key not recognized.':'Enter an ID with at least 4 characters.';$('#lKey').setAttribute('aria-invalid','true');if(can())anime({targets:'#loginForm',translateX:[0,-10,10,-8,8,0],duration:420,easing:'easeInOutSine'});return}
-  err.textContent='';role=r;store('a11ypulse:role',r);authUI();toast('Signed in as '+r);
-  const go=()=>navTo('home');can()?anime({targets:'#lBtn',scale:[1,.92,1.06,1],duration:400,complete:go}):go();
-};
-$('#logout').onclick=()=>{role=null;try{localStorage.removeItem('a11ypulse:role')}catch(e){}authUI();toast('Signed out')};
+    // =========================================================================
+    // 3. SCORE CALCULATION & ANIMATED GAUGE ENGINE
+    // =========================================================================
+    function calculateMetrics() {
+      let totalWeight = 0;
+      let earnedWeight = 0;
+      let checkedCount = 0;
 
-const PAGES=['home','audit','tools','crew','learn','login'];
-function navTo(p){try{history.replaceState(null,'','#/'+p)}catch(e){}route(p)}
-function route(p){
-  if(!PAGES.includes(p))p='home';
-  $$('.page').forEach(s=>s.hidden=s.id!=='p-'+p);
-  $$('.nl').forEach(a=>a.dataset.p===p?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));
-  document.title=p[0].toUpperCase()+p.slice(1)+' — A11yPulse';cur=p;
-  if(p==='audit')setMode(mode);
-  window.scrollTo(0,0);
-  if(can()){
-    anime({targets:`#p-${p} .rv`,opacity:[0,1],translateY:[18,0],delay:anime.stagger(80),duration:650,easing:'easeOutCubic'});
-    if(p==='home'){const b=$('#beat'),L=b.getTotalLength();b.style.strokeDasharray=L;anime.remove(b);anime({targets:b,strokeDashoffset:[L,0],duration:1800,easing:'easeInOutSine',loop:true,direction:'alternate'});countTo($('#sItems'),ITEMS.length)}
-    if(p==='login'){anime({targets:'.pr',r:[12,95],opacity:[.8,0],duration:2600,delay:anime.stagger(850),loop:true,easing:'easeOutSine'});anime({targets:'.lg',opacity:[0,1],translateX:[-14,0],delay:anime.stagger(100,{start:200}),duration:500,easing:'easeOutCubic'})}
-  }else if(p==='home')$('#sItems').textContent=ITEMS.length;
-  $('#main').focus({preventScroll:true});
-}
-document.addEventListener('click',e=>{const a=e.target.closest('a[href^="#/"]');if(!a)return;e.preventDefault();navTo(a.getAttribute('href').slice(2))});
-addEventListener('hashchange',()=>{const p=location.hash.slice(2);if(p!==cur)route(p)});
+      const catTotals = {
+        Perceivable: { earned: 0, total: 0 },
+        Operable: { earned: 0, total: 0 },
+        Understandable: { earned: 0, total: 0 },
+        Robust: { earned: 0, total: 0 }
+      };
 
-buildBars();buildFilters();renderCrew();contrast();authUI();updateScore();
-route(location.hash.slice(2));
-</script>
+      wcagItems.forEach(item => {
+        totalWeight += item.weight;
+        catTotals[item.category].total += item.weight;
+        if (checkedIds.has(item.id)) {
+          earnedWeight += item.weight;
+          checkedCount += 1;
+          catTotals[item.category].earned += item.weight;
+        }
+      });
+
+      const overallPercent = totalWeight > 0 ? Math.round((earnedWeight / totalWeight) * 100) : 0;
+
+      return {
+        overallPercent,
+        earnedWeight,
+        totalWeight,
+        checkedCount,
+        totalCount: wcagItems.length,
+        catTotals
+      };
+    }
+
+    function updateDashboardUI() {
+      const m = calculateMetrics();
+
+      // 1. Animate Main Percentage Number with Anime.js
+      const scoreEl = document.getElementById("scoreValue");
+      const scoreObj = { val: displayedScore };
+      anime({
+        targets: scoreObj,
+        val: m.overallPercent,
+        round: 1,
+        duration: 750,
+        easing: "easeOutExpo",
+        update: function() {
+          scoreEl.textContent = scoreObj.val;
+        }
+      });
+      displayedScore = m.overallPercent;
+
+      // 2. Determine Color Tier & Compliance Label
+      let strokeColor = "#ef4444"; // Red (0-49%)
+      let badgeClasses = "bg-rose-500/15 text-rose-400 border-rose-500/30";
+      let dotColor = "bg-rose-400";
+      let statusLabel = "Critical Issues - Non-Compliant";
+
+      if (m.overallPercent === 100) {
+        strokeColor = "#818cf8"; // Indigo/Gold
+        badgeClasses = "bg-indigo-500/20 text-amber-300 border-amber-400/50";
+        dotColor = "bg-amber-400";
+        statusLabel = "Perfect - Fully Accessible";
+      } else if (m.overallPercent >= 80) {
+        strokeColor = "#10b981"; // Emerald
+        badgeClasses = "bg-emerald-500/15 text-emerald-400 border-emerald-500/30";
+        dotColor = "bg-emerald-400";
+        statusLabel = "Good - WCAG AA Ready";
+      } else if (m.overallPercent >= 50) {
+        strokeColor = "#f59e0b"; // Amber
+        badgeClasses = "bg-amber-500/15 text-amber-400 border-amber-500/30";
+        dotColor = "bg-amber-400";
+        statusLabel = "Needs Work - Partially Compliant";
+      }
+
+      // 3. Animate SVG Progress Ring
+      const circumference = 2 * Math.PI * 50; // r = 50 -> 314.159
+      const targetOffset = circumference - (m.overallPercent / 100) * circumference;
+      const ringEl = document.getElementById("scoreRing");
+      ringEl.style.stroke = strokeColor;
+
+      anime({
+        targets: ringEl,
+        strokeDashoffset: targetOffset,
+        duration: 850,
+        easing: "easeOutCubic"
+      });
+
+      // 4. Update Status Badge & Summary Text
+      const badgeEl = document.getElementById("statusBadge");
+      badgeEl.className = `inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border transition-colors ${badgeClasses}`;
+      document.getElementById("statusDot").className = `w-2 h-2 rounded-full animate-pulse ${dotColor}`;
+      document.getElementById("statusText").textContent = statusLabel;
+
+      document.getElementById("scoreSummaryText").textContent =
+        `${m.checkedCount} of ${m.totalCount} checks passed (${m.earnedWeight} / ${m.totalWeight} weighted pts). ${
+          m.overallPercent === 100
+            ? "All WCAG 2.2 POUR criteria verified!"
+            : "Resolve Level A items in the Remediation Queue first."
+        }`;
+
+      // 5. Update POUR Mini-Bars
+      Object.keys(m.catTotals).forEach(cat => {
+        const { earned, total } = m.catTotals[cat];
+        const pct = total > 0 ? Math.round((earned / total) * 100) : 0;
+        const pctEl = document.getElementById(`pct-${cat}`);
+        const barEl = document.getElementById(`bar-${cat}`);
+        if (pctEl) pctEl.textContent = `${pct}%`;
+        if (barEl) barEl.style.width = `${pct}%`;
+      });
+
+      // 6. Update Unchecked Badge Count
+      const uncheckedCount = m.totalCount - m.checkedCount;
+      document.getElementById("uncheckedCountBadge").textContent = uncheckedCount;
+    }
+
+    // =========================================================================
+    // 4. RENDER INTERACTIVE CHECKLIST CARDS
+    // =========================================================================
+    function getLevelBadgeHTML(level, weight) {
+      if (level === "A") {
+        return `<span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-rose-500/15 text-rose-300 border border-rose-500/30">Level A · Critical (${weight} pts)</span>`;
+      }
+      if (level === "AA") {
+        return `<span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-amber-500/15 text-amber-300 border border-amber-500/30">Level AA · Important (${weight} pts)</span>`;
+      }
+      return `<span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">Level AAA · Enhanced (${weight} pt)</span>`;
+    }
+
+    function getCategoryPillHTML(category) {
+      const colors = {
+        Perceivable: "text-indigo-300 bg-indigo-950/80 border-indigo-800/60",
+        Operable: "text-emerald-300 bg-emerald-950/80 border-emerald-800/60",
+        Understandable: "text-amber-300 bg-amber-950/80 border-amber-800/60",
+        Robust: "text-purple-300 bg-purple-950/80 border-purple-800/60"
+      };
+      return `<span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-md border ${colors[category] || ''}">${category}</span>`;
+    }
+
+    function renderChecklist(animateEntrance = false) {
+      const container = document.getElementById("checklistContainer");
+      const filtered = wcagItems.filter(item => {
+        if (activeFilter === "All") return true;
+        if (activeFilter === "Incomplete") return !checkedIds.has(item.id);
+        return item.category === activeFilter;
+      });
+
+      document.getElementById("filterCounter").textContent = `Showing ${filtered.length} of ${wcagItems.length} items`;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="glass rounded-2xl p-8 text-center space-y-2 border border-emerald-500/30">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-500/15 text-emerald-400 flex items-center justify-center mx-auto">
+              <i data-lucide="party-popper" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-base font-bold text-white">No Incomplete Checks in This View!</h3>
+            <p class="text-xs text-slate-400">Every requirement in this filter has been marked compliant.</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = filtered.map(item => {
+        const isChecked = checkedIds.has(item.id);
+        return `
+          <article
+            id="card-${item.id}"
+            class="checklist-card glass glass-hover rounded-2xl p-4 sm:p-5 transition cursor-pointer select-none ${
+              isChecked ? "border-emerald-500/40 bg-emerald-950/10" : "border-slate-800/90"
+            }"
+            onclick="toggleCheck('${item.id}', event)"
+          >
+            <div class="flex items-start gap-3.5 sm:gap-4">
+              <!-- Custom Accessible Checkbox -->
+              <button
+                type="button"
+                role="checkbox"
+                aria-checked="${isChecked}"
+                aria-label="Mark ${item.title} as compliant"
+                id="chk-${item.id}"
+                onclick="event.stopPropagation(); toggleCheck('${item.id}', event)"
+                class="mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center border-2 transition flex-shrink-0 ${
+                  isChecked
+                    ? "bg-emerald-500 border-emerald-400 text-slate-950 shadow-md shadow-emerald-500/25"
+                    : "bg-slate-900 border-slate-600 hover:border-indigo-400 text-transparent"
+                }"
+              >
+                <i data-lucide="check" class="w-4 h-4 stroke-[3]"></i>
+              </button>
+
+              <!-- Content -->
+              <div class="flex-1 min-w-0">
+                <div class="flex flex-wrap items-center gap-2 mb-1.5">
+                  ${getCategoryPillHTML(item.category)}
+                  <span class="text-[11px] font-mono text-slate-400">WCAG ${item.sc}</span>
+                  ${getLevelBadgeHTML(item.level, item.weight)}
+                </div>
+
+                <h3 class="text-sm sm:text-base font-bold transition ${
+                  isChecked ? "line-through text-slate-400" : "text-white"
+                }">
+                  ${item.title}
+                </h3>
+
+                <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+                  ${item.description}
+                </p>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join("");
+
+      lucide.createIcons();
+
+      if (animateEntrance) {
+        anime({
+          targets: ".checklist-card",
+          opacity: [0, 1],
+          translateY: [16, 0],
+          delay: anime.stagger(55),
+          duration: 450,
+          easing: "easeOutQuad"
+        });
+      }
+    }
+
+    // =========================================================================
+    // 5. RENDER SMART SUGGESTED IMPROVEMENTS & CODE FIX ENGINE
+    // =========================================================================
+    function escapeHTML(str) {
+      return str
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+    }
+
+    function renderSuggestions() {
+      const container = document.getElementById("suggestionsContainer");
+
+      // Filter unchecked and sort by weight descending (Level A = 3 first, AA = 2, AAA = 1)
+      const unchecked = wcagItems
+        .filter(item => !checkedIds.has(item.id))
+        .sort((a, b) => b.weight - a.weight);
+
+      if (unchecked.length === 0) {
+        container.innerHTML = `
+          <div class="bg-emerald-950/30 border border-emerald-500/40 rounded-2xl p-6 text-center space-y-3">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto">
+              <i data-lucide="award" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-base font-extrabold text-white">100% WCAG 2.2 Compliant!</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Zero unresolved accessibility barriers remain. Click <strong>Export Audit Report</strong> above to copy your markdown compliance certificate.
+            </p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = unchecked.map(item => `
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-4 space-y-3 transition hover:border-slate-700">
+          <div class="flex items-start justify-between gap-2">
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                ${getLevelBadgeHTML(item.level, item.weight)}
+                <span class="text-[11px] font-mono text-slate-400">SC ${item.sc}</span>
+              </div>
+              <h3 class="text-sm font-bold text-white">${item.title}</h3>
+            </div>
+            <button
+              type="button"
+              onclick="toggleCheck('${item.id}', event)"
+              class="text-[11px] font-semibold bg-indigo-600/20 hover:bg-indigo-600 text-indigo-300 hover:text-white border border-indigo-500/30 px-2.5 py-1 rounded-lg transition flex-shrink-0"
+            >
+              Mark Fixed ✓
+            </button>
+          </div>
+
+          <!-- Why It Matters -->
+          <div class="bg-slate-950/80 border-l-2 border-amber-400 px-3 py-2 rounded-r-xl text-xs text-slate-300">
+            <strong class="text-amber-300">Why it matters:</strong> ${item.whyItMatters}
+          </div>
+
+          <!-- Before vs After Code Snippets -->
+          <div class="space-y-2 text-[11px]">
+            <div class="bg-rose-950/30 border border-rose-900/50 rounded-xl p-2.5">
+              <div class="text-rose-400 font-bold mb-1 flex items-center gap-1">
+                <span>❌ Bad HTML / CSS</span>
+              </div>
+              <pre class="overflow-x-auto text-rose-200/90 leading-relaxed"><code>${escapeHTML(item.badCode)}</code></pre>
+            </div>
+
+            <div class="bg-emerald-950/30 border border-emerald-900/50 rounded-xl p-2.5">
+              <div class="text-emerald-400 font-bold mb-1 flex items-center gap-1">
+                <span>✅ Accessible Fix</span>
+              </div>
+              <pre class="overflow-x-auto text-emerald-200/90 leading-relaxed"><code>${escapeHTML(item.goodCode)}</code></pre>
+            </div>
+          </div>
+        </div>
+      `).join("");
+
+      lucide.createIcons();
+    }
+
+    // =========================================================================
+    // 6. INTERACTION HANDLERS & ANIME.JS SPRING PHYSICS
+    // =========================================================================
+    function toggleCheck(id, event) {
+      if (checkedIds.has(id)) {
+        checkedIds.delete(id);
+      } else {
+        checkedIds.add(id);
+      }
+      saveState();
+
+      // Re-render UI
+      renderChecklist(false);
+      renderSuggestions();
+      updateDashboardUI();
+
+      // Spring bounce animation on the clicked checkbox & card
+      const chkEl = document.getElementById(`chk-${id}`);
+      if (chkEl) {
+        anime({
+          targets: chkEl,
+          scale: [0.75, 1.18, 1],
+          duration: 450,
+          easing: "spring(1, 80, 10, 0)"
+        });
+      }
+    }
+
+    function setFilter(filterName, btnEl) {
+      activeFilter = filterName;
+      document.querySelectorAll(".filter-tab").forEach(btn => {
+        btn.setAttribute("aria-selected", "false");
+        btn.className = "filter-tab text-xs font-semibold px-3.5 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-300 border border-slate-800 transition flex-shrink-0";
+      });
+
+      btnEl.setAttribute("aria-selected", "true");
+      btnEl.className = "filter-tab text-xs font-semibold px-3.5 py-2 rounded-xl bg-indigo-600 text-white shadow-md shadow-indigo-600/20 transition flex-shrink-0";
+
+      springButton(btnEl);
+      renderChecklist(true);
+    }
+
+    function springButton(btnEl) {
+      if (!btnEl) return;
+      anime({
+        targets: btnEl,
+        scale: [0.92, 1.05, 1],
+        duration: 400,
+        easing: "spring(1, 80, 12, 0)"
+      });
+    }
+
+    function checkAllDemo(btnEl) {
+      springButton(btnEl);
+      wcagItems.forEach(item => checkedIds.add(item.id));
+      saveState();
+      renderChecklist(true);
+      renderSuggestions();
+      updateDashboardUI();
+      showToast("All 12 WCAG 2.2 checks marked complete (100% score)!");
+    }
+
+    function resetProgress(btnEl) {
+      springButton(btnEl);
+      checkedIds.clear();
+      saveState();
+      renderChecklist(true);
+      renderSuggestions();
+      updateDashboardUI();
+      showToast("Audit progress reset to 0%.");
+    }
+
+    function exportAuditReport(btnEl) {
+      springButton(btnEl);
+      const m = calculateMetrics();
+      const dateStr = new Date().toISOString().split("T")[0];
+
+      let md = `# A11yPulse — WCAG 2.2 Accessibility Audit Report\n`;
+      md += `**Date:** ${dateStr}\n`;
+      md += `**Overall Weighted Score:** ${m.overallPercent}% (${m.earnedWeight}/${m.totalWeight} pts)\n`;
+      md += `**Status:** ${document.getElementById("statusText").textContent}\n\n`;
+
+      md += `## POUR Category Breakdown\n`;
+      Object.keys(m.catTotals).forEach(cat => {
+        const c = m.catTotals[cat];
+        const pct = Math.round((c.earned / c.total) * 100);
+        md += `- **${cat}:** ${pct}% (${c.earned}/${c.total} pts)\n`;
+      });
+
+      md += `\n## Completed Checks (${m.checkedCount}/${m.totalCount})\n`;
+      wcagItems.forEach(item => {
+        const mark = checkedIds.has(item.id) ? "[x]" : "[ ]";
+        md += `- ${mark} **${item.title}** (WCAG ${item.sc} · Level ${item.level})\n`;
+      });
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(md).then(() => {
+          showToast("Markdown Audit Report copied to clipboard!");
+        }).catch(() => {
+          fallbackCopy(md);
+        });
+      } else {
+        fallbackCopy(md);
+      }
+    }
+
+    function fallbackCopy(text) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand("copy"); } catch (e) {}
+      document.body.removeChild(ta);
+      showToast("Markdown Audit Report copied to clipboard!");
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      document.getElementById("toastMessage").textContent = msg;
+      toast.classList.remove("opacity-0", "translate-y-4");
+      toast.classList.add("opacity-100", "translate-y-0");
+      setTimeout(() => {
+        toast.classList.add("opacity-0", "translate-y-4");
+        toast.classList.remove("opacity-100", "translate-y-0");
+      }, 2800);
+    }
+
+    // =========================================================================
+    // 7. BONUS MINI-TOOL: LIVE HTML SNIPPET & CONTRAST AUDITOR
+    // =========================================================================
+    function switchRightPanel(panel) {
+      const fixesPanel = document.getElementById("panelFixes");
+      const scannerPanel = document.getElementById("panelScanner");
+      const btnFixes = document.getElementById("tabBtnFixes");
+      const btnScanner = document.getElementById("tabBtnScanner");
+
+      if (panel === "fixes") {
+        fixesPanel.classList.remove("hidden");
+        scannerPanel.classList.add("hidden");
+        btnFixes.className = "flex-1 py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 bg-indigo-600 text-white shadow transition";
+        btnScanner.className = "flex-1 py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 text-slate-400 hover:text-white transition";
+      } else {
+        fixesPanel.classList.add("hidden");
+        scannerPanel.classList.remove("hidden");
+        btnScanner.className = "flex-1 py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 bg-indigo-600 text-white shadow transition";
+        btnFixes.className = "flex-1 py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 text-slate-400 hover:text-white transition";
+      }
+    }
+
+    function loadSampleBadHTML() {
+      const sample = `<img src="banner-promo.jpg">\n<input type="text" placeholder="Search catalog...">\n<button><i class="icon-bell"></i></button>\n<a href="#"></a>`;
+      document.getElementById("htmlSnippetInput").value = sample;
+      runHtmlQuickScan();
+    }
+
+    function clearHtmlScan() {
+      document.getElementById("htmlSnippetInput").value = "";
+      document.getElementById("scanResultsContainer").innerHTML = "";
+    }
+
+    function runHtmlQuickScan(btnEl) {
+      if (btnEl) springButton(btnEl);
+      const raw = document.getElementById("htmlSnippetInput").value.trim();
+      const out = document.getElementById("scanResultsContainer");
+
+      if (!raw) {
+        out.innerHTML = `<div class="text-xs text-amber-300 bg-amber-950/40 border border-amber-700/40 rounded-xl p-3">⚠️ Paste an HTML snippet above or click "Load Bad Sample" to test.</div>`;
+        return;
+      }
+
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(raw, "text/html");
+      const issues = [];
+
+      // 1. Check <img> without alt
+      doc.querySelectorAll("img").forEach((img, idx) => {
+        if (!img.hasAttribute("alt")) {
+          const src = img.getAttribute("src") || `image-${idx + 1}.jpg`;
+          issues.push({
+            level: "Level A",
+            issue: `Missing alt attribute on <img src="${src}">`,
+            fix: `<img src="${src}" alt="Describe image purpose">`
+          });
+        }
+      });
+
+      // 2. Check <input>, <select>, <textarea> without associated <label> or aria-label
+      doc.querySelectorAll("input, select, textarea").forEach(input => {
+        const type = (input.getAttribute("type") || "text").toLowerCase();
+        if (type === "hidden" || type === "submit" || type === "button") return;
+
+        const id = input.getAttribute("id");
+        const hasForLabel = id && doc.querySelector(`label[for="${id}"]`);
+        const wrappedInLabel = input.closest("label");
+        const hasAria = input.hasAttribute("aria-label") || input.hasAttribute("aria-labelledby");
+
+        if (!hasForLabel && !wrappedInLabel && !hasAria) {
+          const ph = input.getAttribute("placeholder") || "User Input";
+          issues.push({
+            level: "Level A",
+            issue: `Unlabeled <${input.tagName.toLowerCase()}> field (placeholders are not accessible labels)`,
+            fix: `<label for="fieldId">${ph}</label>\n<input id="fieldId" type="${type}">`
+          });
+        }
+      });
+
+      // 3. Check empty <button> or <a> without discernible text or aria-label
+      doc.querySelectorAll("button, a").forEach(el => {
+        const text = (el.textContent || "").trim();
+        const ariaLabel = el.getAttribute("aria-label") || el.getAttribute("aria-labelledby");
+        const imgAlt = el.querySelector("img[alt]:not([alt=''])");
+        if (!text && !ariaLabel && !imgAlt) {
+          const tag = el.tagName.toLowerCase();
+          issues.push({
+            level: "Level A",
+            issue: `Empty <${tag}> has no accessible name for screen readers`,
+            fix: `<${tag} aria-label="Descriptive action">${el.innerHTML || "Action"}</${tag}>`
+          });
+        }
+      });
+
+      if (issues.length === 0) {
+        out.innerHTML = `
+          <div class="bg-emerald-950/40 border border-emerald-500/40 rounded-xl p-3.5 text-xs text-emerald-300 flex items-center gap-2">
+            <i data-lucide="check-circle" class="w-4 h-4 flex-shrink-0"></i>
+            <span><strong>Passed Quick Scan!</strong> No missing alt attributes, unlabeled inputs, or empty buttons detected.</span>
+          </div>
+        `;
+      } else {
+        out.innerHTML = `
+          <div class="text-xs font-bold text-rose-400 mb-1">Found ${issues.length} Accessibility Issue${issues.length > 1 ? 's' : ''}:</div>
+          ${issues.map(item => `
+            <div class="bg-slate-950 border border-rose-900/60 rounded-xl p-3 space-y-1.5 text-xs">
+              <div class="flex items-center justify-between">
+                <span class="font-bold text-rose-300">❌ ${escapeHTML(item.issue)}</span>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-500/20 text-rose-300">${item.level}</span>
+              </div>
+              <div class="text-[11px] text-emerald-300 font-mono bg-emerald-950/30 border border-emerald-900/50 rounded-lg p-2 overflow-x-auto">
+                ✅ Fix: ${escapeHTML(item.fix)}
+              </div>
+            </div>
+          `).join("")}
+        `;
+      }
+      lucide.createIcons();
+    }
+
+    // Live Color Contrast Calculator (WCAG 2.x Relative Luminance Formula)
+    function hexToRgb(hex) {
+      const clean = hex.replace("#", "").trim();
+      if (clean.length !== 6) return null;
+      const num = parseInt(clean, 16);
+      if (isNaN(num)) return null;
+      return { r: (num >> 16) & 255, g: (num >> 8) & 255, b: num & 255 };
+    }
+
+    function getLuminance({ r, g, b }) {
+      const a = [r, g, b].map(v => {
+        v /= 255;
+        return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+      });
+      return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+    }
+
+    function updateContrastChecker() {
+      const fgHex = document.getElementById("fgColorPicker").value;
+      const bgHex = document.getElementById("bgColorPicker").value;
+      document.getElementById("fgColorHex").value = fgHex.toUpperCase();
+      document.getElementById("bgColorHex").value = bgHex.toUpperCase();
+
+      const fgRgb = hexToRgb(fgHex);
+      const bgRgb = hexToRgb(bgHex);
+      if (!fgRgb || !bgRgb) return;
+
+      const l1 = getLuminance(fgRgb);
+      const l2 = getLuminance(bgRgb);
+      const ratio = (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+      const rounded = ratio.toFixed(2);
+
+      const preview = document.getElementById("contrastPreviewBox");
+      preview.style.backgroundColor = bgHex;
+      preview.style.color = fgHex;
+
+      document.getElementById("contrastRatioText").textContent = `${rounded}:1`;
+      const badge = document.getElementById("contrastPassBadge");
+
+      if (ratio >= 7) {
+        badge.textContent = "AAA Pass (7:1+)";
+        badge.className = "block text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 mt-1";
+      } else if (ratio >= 4.5) {
+        badge.textContent = "AA Pass (4.5:1+)";
+        badge.className = "block text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-indigo-500/25 text-indigo-200 border border-indigo-400/40 mt-1";
+      } else if (ratio >= 3.0) {
+        badge.textContent = "Large Text Only";
+        badge.className = "block text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-amber-500/25 text-amber-200 border border-amber-400/40 mt-1";
+      } else {
+        badge.textContent = "WCAG Fail (<3:1)";
+        badge.className = "block text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-rose-500/25 text-rose-200 border border-rose-400/40 mt-1";
+      }
+    }
+
+    function syncHexInput(type) {
+      const hexInput = document.getElementById(type === "fg" ? "fgColorHex" : "bgColorHex");
+      const picker = document.getElementById(type === "fg" ? "fgColorPicker" : "bgColorPicker");
+      let val = hexInput.value.trim();
+      if (!val.startsWith("#")) val = "#" + val;
+      if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+        picker.value = val;
+        updateContrastChecker();
+      }
+    }
+
+    // =========================================================================
+    // 8. INITIALIZATION ON DOM LOAD
+    // =========================================================================
+    document.addEventListener("DOMContentLoaded", () => {
+      loadSavedState();
+      renderChecklist(true);
+      renderSuggestions();
+      updateDashboardUI();
+      updateContrastChecker();
+      lucide.createIcons();
+    });
+  </script>
 </body>
 </html>
